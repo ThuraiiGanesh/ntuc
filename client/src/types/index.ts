@@ -62,6 +62,7 @@ export interface FoodLogEntry {
   sugar_g: number;
   photo_url?: string;
   healthier_alternative?: string;
+  oiliness_level?: OilinessLevel;
   notes?: string;
   created_at: string;
 }
@@ -107,6 +108,8 @@ export interface IngredientItem {
   notes?: string;
 }
 
+export type OilinessLevel = 'light' | 'moderate' | 'oily' | 'very_oily';
+
 export interface VisionResult {
   dish_id?: string;
   dish_name: string;
@@ -121,6 +124,11 @@ export interface VisionResult {
   fat_g: number;
   sodium_mg: number;
   sugar_g: number;
+  oiliness_level?: OilinessLevel;
+  oiliness_score?: number;
+  oil_sheen_detected?: boolean;
+  oil_delta_fat_g?: number;
+  oil_notes?: string;
   healthier_alternative: string;
   ingredients_breakdown?: IngredientItem[];
   alternative_dishes_if_uncertain: Array<{

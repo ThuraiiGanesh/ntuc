@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Check, X, Sliders, AlertCircle, Sparkles, ChevronDown, RefreshCw } from 'lucide-react';
+import { Check, X, Sliders, AlertCircle, Sparkles, ChevronDown, RefreshCw, Droplets, Flame } from 'lucide-react';
 import confetti from 'canvas-confetti';
-import { VisionResult, FoodLogEntry } from '../../types';
+import { VisionResult, FoodLogEntry, OilinessLevel } from '../../types';
 import { api } from '../../services/api';
 
 interface AIResultModalProps {
@@ -36,7 +36,22 @@ export const AIResultModal: React.FC<AIResultModalProps> = ({
   const [notes, setNotes] = useState('');
   const [saving, setSaving] = useState(false);
 
-  // Live Recalculated Nutrition based on Multiplier
+  // Oiliness & Grease Sheen State
+  const [selectedOilLevel, setSelectedOilLevel] = useState<OilinessLevel>(
+    result.oiliness_level || 'moderate'
+  );
+
+  const OIL_DELTA_MAP: Record<OilinessLevel, { fatG: number; label: string; sub: string; tag: string }> = {
+    light: { fatG: -6, label: 'Less Oil / Light', sub: '-6g fat (-54 kcal)', tag: '🌱 Less Oil' },
+    moderate: { fatG: 0, label: 'Standard Hawker', sub: 'Baseline recipe', tag: '🟡 Standard' },
+    oily: { fatG: 8, label: 'Oily / Rich', sub: '+8g fat (+72 kcal)', tag: '🟠 Oily Sheen' },
+    very_oily: { fatG: 14, label: 'Extra Lard / Greasy', sub: '+14g fat (+126 kcal)', tag: '🔥 Extra Greasy' }
+  };
+
+  const currentOilDeltaFat = OIL_DELTA_MAP[selectedOilLevel].fatG;
+  const currentOilDeltaCals = currentOilDeltaFat * 9;
+
+  // Live Recalculated Nutrition based on Multiplier & Oiliness Level
   const baseCal = result.calories;
   const baseP = result.protein_g;
   const baseC = result.carbs_g;
@@ -44,10 +59,13 @@ export const AIResultModal: React.FC<AIResultModalProps> = ({
   const baseNa = result.sodium_mg;
   const baseSugar = result.sugar_g;
 
-  const currentCal = Math.round(baseCal * multiplier);
+  const adjustedBaseFat = Math.max(1, baseF + currentOilDeltaFat);
+  const adjustedBaseCal = Math.max(50, Math.round(baseCal + currentOilDeltaCals));
+
+  const currentCal = Math.round(adjustedBaseCal * multiplier);
   const currentP = Math.round(baseP * multiplier);
   const currentC = Math.round(baseC * multiplier);
-  const currentF = Math.round(baseF * multiplier);
+  const currentF = Math.round(adjustedBaseFat * multiplier);
   const currentNa = Math.round(baseNa * multiplier);
   const currentSugar = Math.round(baseSugar * multiplier);
 
@@ -90,6 +108,7 @@ export const AIResultModal: React.FC<AIResultModalProps> = ({
         sugar_g: currentSugar,
         photo_url: photoUrl || 'https://images.unsplash.com/photo-1544025162-d76694265947?w=400&q=80',
         healthier_alternative: result.healthier_alternative,
+        oiliness_level: selectedOilLevel,
         notes
       });
 
@@ -315,6 +334,94 @@ export const AIResultModal: React.FC<AIResultModalProps> = ({
                     Search full catalog...
                   </button>
                 </div>
+              </div>
+            )}
+          </div>
+
+          {/* AI OILINESS & GREASE SHEEN SCANNER */}
+          <div className="bg-white rounded-2xl p-4 border border-stone-200 shadow-soft space-y-3 animate-fade-slide-up delay-120">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-1.5">
+                <Droplets className="w-4 h-4 text-amber-600" />
+                <span className="text-xs font-bold text-slate-800 uppercase tracking-wider">
+                  Oiliness & Grease Sheen
+                </span>
+              </div>
+              <span className={`text-[11px] font-bold px-2 py-0.5 rounded-md border ${
+                selectedOilLevel === 'light'
+                  ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                  : selectedOilLevel === 'moderate'
+                  ? 'bg-amber-50 text-amber-700 border-amber-200'
+                  : selectedOilLevel === 'oily'
+                  ? 'bg-orange-50 text-orange-700 border-orange-200'
+                  : 'bg-red-50 text-red-700 border-red-200'
+              }`}>
+                {OIL_DELTA_MAP[selectedOilLevel].tag}
+              </span>
+            </div>
+
+            {/* AI Oil Observation Pill */}
+            <div className="bg-stone-50 border border-stone-200/70 p-2.5 rounded-xl text-xs space-y-1">
+              <div className="flex items-center justify-between text-[11px]">
+                <span className="text-stone-500 font-medium">Visual Sheen Analysis:</span>
+                <span className="font-semibold text-slate-700">
+                  {result.oil_sheen_detected !== false ? '✨ Surface sheen detected' : '🍃 Low surface reflection'}
+                </span>
+              </div>
+              {result.oil_notes && (
+                <p className="text-[11px] text-stone-600 italic">
+                  "{result.oil_notes}"
+                </p>
+              )}
+            </div>
+
+            {/* Interactive Oiliness Level Selector */}
+            <div>
+              <span className="text-[10px] font-bold uppercase tracking-wider text-stone-400 block mb-1.5">
+                Adjust Based on Preparation / Hawker Request:
+              </span>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
+                {(['light', 'moderate', 'oily', 'very_oily'] as OilinessLevel[]).map(level => {
+                  const meta = OIL_DELTA_MAP[level];
+                  const isSelected = selectedOilLevel === level;
+                  return (
+                    <button
+                      key={level}
+                      type="button"
+                      onClick={() => setSelectedOilLevel(level)}
+                      className={`p-2 rounded-xl border text-left transition-all ${
+                        isSelected
+                          ? 'bg-amber-50/80 border-amber-500 ring-1 ring-amber-500 text-slate-900 shadow-sm'
+                          : 'bg-stone-50/60 border-stone-200/80 text-stone-600 hover:bg-stone-100/80'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between mb-0.5">
+                        <span className="text-xs font-bold truncate">
+                          {level === 'light' ? 'Light' : level === 'moderate' ? 'Standard' : level === 'oily' ? 'Oily' : 'Extra Lard'}
+                        </span>
+                        {isSelected && <Check className="w-3 h-3 text-amber-600 shrink-0" />}
+                      </div>
+                      <div className="text-[10px] text-stone-500 font-medium">
+                        {meta.fatG > 0 ? `+${meta.fatG}g fat` : meta.fatG < 0 ? `${meta.fatG}g fat` : 'Baseline'}
+                      </div>
+                      <div className={`text-[9px] font-semibold mt-0.5 ${
+                        meta.fatG > 0 ? 'text-amber-700' : meta.fatG < 0 ? 'text-emerald-700' : 'text-stone-400'
+                      }`}>
+                        {meta.fatG > 0 ? `+${meta.fatG * 9} kcal` : meta.fatG < 0 ? `${meta.fatG * 9} kcal` : '±0 kcal'}
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Dynamic Oil Impact Summary */}
+            {currentOilDeltaFat !== 0 && (
+              <div className="text-[11px] font-medium bg-amber-50 text-amber-900 px-2.5 py-1.5 rounded-lg border border-amber-200/60 flex items-center justify-between">
+                <span>Cooking oil impact:</span>
+                <span className="font-bold">
+                  {currentOilDeltaFat > 0 ? `+${currentOilDeltaFat}g fat (${currentOilDeltaCals > 0 ? '+' : ''}${currentOilDeltaCals} kcal)` : `${currentOilDeltaFat}g fat (${currentOilDeltaCals} kcal)`}
+                </span>
               </div>
             )}
           </div>

@@ -26,6 +26,11 @@ export interface VisionIdentificationResult {
   fat_g: number;
   sodium_mg: number;
   sugar_g: number;
+  oiliness_level?: 'light' | 'moderate' | 'oily' | 'very_oily';
+  oiliness_score?: number; // 1 - 5
+  oil_sheen_detected?: boolean;
+  oil_delta_fat_g?: number;
+  oil_notes?: string;
   healthier_alternative: string;
   ingredients_breakdown: IngredientItem[];
   alternative_dishes_if_uncertain: Array<{
@@ -46,6 +51,13 @@ Your task:
 3. Break down the visible meal into its individual ingredients with estimated weight in grams (e.g. poached chicken thigh 130g, seasoned rice 190g, cucumber slices 30g, chili sauce 20g).
 4. Calculate calories, protein, carbs, fat, sodium, and sugar for each component and overall total.
 5. Provide actionable healthier hawker ordering tips.
+6. Analyze the visual oiliness and grease sheen of the dish:
+   - Look for specular highlights (bright light reflections), surface grease coat, visible pooling oil/lard/chili oil, or conversely steamed/clear broth/dry texture.
+   - Assign "oiliness_level": "light" (steamed, clear soup, fresh salad, minimal oil), "moderate" (standard light stir-fry, roasted meats), "oily" (rich coconut broth, fried rice/noodles with glistening coat), or "very_oily" (deep-fried, lard-laden Char Kway Teow, pooled chili oil, crispy prata with ghee).
+   - Assign "oiliness_score": integer 1 to 5 (1 = dry/steamed, 3 = normal hawker baseline, 5 = heavy grease/lard).
+   - Set "oil_sheen_detected": true/false.
+   - Set "oil_delta_fat_g": estimated difference in fat grams from standard baseline (e.g. -6 for light/steamed, 0 for standard, +8 for oily, +14 for very_oily).
+   - Set "oil_notes": 1 sentence explaining the detected oil characteristic (e.g. "Noticeable glistening oil sheen across stir-fried kway teow noodles").
 
 You MUST reply strictly with valid JSON conforming to this format:
 {
@@ -61,6 +73,11 @@ You MUST reply strictly with valid JSON conforming to this format:
   "fat_g": number,
   "sodium_mg": number,
   "sugar_g": number,
+  "oiliness_level": "light" | "moderate" | "oily" | "very_oily",
+  "oiliness_score": number,
+  "oil_sheen_detected": boolean,
+  "oil_delta_fat_g": number,
+  "oil_notes": string,
   "ingredients_breakdown": [
     {
       "ingredient": string,
@@ -262,8 +279,58 @@ export function getCuratedIngredients(dish: HawkerDish): IngredientItem[] {
   }
 }
 
+export function determineHawkerOiliness(dish: HawkerDish): {
+  oiliness_level: 'light' | 'moderate' | 'oily' | 'very_oily';
+  oiliness_score: number;
+  oil_sheen_detected: boolean;
+  oil_delta_fat_g: number;
+  oil_notes: string;
+} {
+  const fat = dish.fat_g;
+  const name = dish.name_en.toLowerCase();
+
+  if (name.includes('soup') || name.includes('steamed') || name.includes('yong tau foo') || fat < 8) {
+    return {
+      oiliness_level: 'light',
+      oiliness_score: 1,
+      oil_sheen_detected: false,
+      oil_delta_fat_g: -6,
+      oil_notes: 'Clear broth / steamed preparation with minimal surface oil droplets.'
+    };
+  }
+
+  if (name.includes('kway teow') || name.includes('carrot cake') || name.includes('prata') || (name.includes('fried') && fat > 22)) {
+    return {
+      oiliness_level: 'very_oily',
+      oiliness_score: 5,
+      oil_sheen_detected: true,
+      oil_delta_fat_g: 14,
+      oil_notes: 'Pronounced wok-hei lard sheen and glistening oil coating across the dish.'
+    };
+  }
+
+  if (name.includes('laksa') || name.includes('curry') || name.includes('nasi lemak') || name.includes('goreng') || fat > 16) {
+    return {
+      oiliness_level: 'oily',
+      oiliness_score: 4,
+      oil_sheen_detected: true,
+      oil_delta_fat_g: 8,
+      oil_notes: 'Visible coconut oil / sambal oil sheen and rich gravy coating.'
+    };
+  }
+
+  return {
+    oiliness_level: 'moderate',
+    oiliness_score: 3,
+    oil_sheen_detected: true,
+    oil_delta_fat_g: 0,
+    oil_notes: 'Standard hawker wok oil level with moderate surface sheen.'
+  };
+}
+
 function buildResultWithIngredients(dish: HawkerDish, confidence: number, notes: string): VisionIdentificationResult {
   const ingredients = getCuratedIngredients(dish);
+  const oiliness = determineHawkerOiliness(dish);
 
   const relatedDishes = HAWKER_DISHES
     .filter(d => d.id !== dish.id && (d.category === dish.category || d.stall_type === dish.stall_type))
@@ -291,6 +358,11 @@ function buildResultWithIngredients(dish: HawkerDish, confidence: number, notes:
     fat_g: dish.fat_g,
     sodium_mg: dish.sodium_mg,
     sugar_g: dish.sugar_g,
+    oiliness_level: oiliness.oiliness_level,
+    oiliness_score: oiliness.oiliness_score,
+    oil_sheen_detected: oiliness.oil_sheen_detected,
+    oil_delta_fat_g: oiliness.oil_delta_fat_g,
+    oil_notes: oiliness.oil_notes,
     healthier_alternative: dish.healthier_alternative,
     ingredients_breakdown: ingredients,
     alternative_dishes_if_uncertain,
