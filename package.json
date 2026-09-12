@@ -1,0 +1,18 @@
+{
+  "name": "googoogaga-hawker-nutrition",
+  "version": "1.0.0",
+  "description": "Googoogaga - Singapore Hawker Food AI Nutrition Tracker",
+  "scripts": {
+    "install:all": "npm install && npm install --prefix server && npm install --prefix client",
+    "dev:server": "npm run dev --prefix server",
+    "dev:client": "npm run dev --prefix client",
+    "dev": "concurrently -n \"SERVER,CLIENT\" -c \"blue,green\" \"npm run dev:server\" \"npm run dev:client\"",
+    "build": "npm run build --prefix client && npm run build --prefix server"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1"
+  }
+}

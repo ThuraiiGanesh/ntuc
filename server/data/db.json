@@ -1,0 +1,96 @@
+{
+  "user": {
+    "name": "Singaporean Foodie",
+    "onboarded": true,
+    "age": 29,
+    "sex": "male",
+    "height_cm": 174,
+    "current_weight_kg": 72,
+    "target_weight_kg": 68,
+    "goal": "lose_weight",
+    "activity_level": "lightly_active",
+    "dietary_preferences": [
+      "no_restriction"
+    ],
+    "health_conditions": [],
+    "allergies": [],
+    "bmr": 1668,
+    "tdee": 2294,
+    "target_calories": 1794,
+    "target_protein_g": 130,
+    "target_carbs_g": 193,
+    "target_fat_g": 56,
+    "target_sodium_mg": 2000,
+    "target_sugar_g": 35,
+    "water_target_ml": 2520,
+    "updated_at": "2026-09-12T11:09:00.986Z"
+  },
+  "food_logs": [
+    {
+      "id": "log-1",
+      "date": "2026-09-12",
+      "meal_type": "breakfast",
+      "dish_id": "kaya-toast-set",
+      "dish_name": "Traditional Kaya Butter Toast Set",
+      "name_local": "咖椰面包及半生熟蛋套餐",
+      "portion_size": "regular",
+      "portion_multiplier": 1,
+      "calories": 450,
+      "protein_g": 16,
+      "carbs_g": 52,
+      "fat_g": 19,
+      "sodium_mg": 580,
+      "sugar_g": 18,
+      "photo_url": "https://images.unsplash.com/photo-1541658016709-82535e94bc69?w=400&q=80",
+      "healthier_alternative": "Scrape off excess butter slab and ask for Kopi-O Kosong to cut 18g sugar.",
+      "notes": "Breakfast with Kopi-O Kosong at Maxwell Food Centre",
+      "created_at": "2026-09-12T08:30:00Z"
+    },
+    {
+      "id": "log-2",
+      "date": "2026-09-12",
+      "meal_type": "lunch",
+      "dish_id": "chicken-rice-steamed",
+      "dish_name": "Hainanese Steamed Chicken Rice",
+      "name_local": "白鸡饭 (Bai Ji Fan)",
+      "portion_size": "regular",
+      "portion_multiplier": 1,
+      "calories": 607,
+      "protein_g": 27,
+      "carbs_g": 65,
+      "fat_g": 23,
+      "sodium_mg": 980,
+      "sugar_g": 2,
+      "photo_url": "https://images.unsplash.com/photo-1544025162-d76694265947?w=400&q=80",
+      "healthier_alternative": "Request steamed breast meat without skin, swap half the oily rice for plain rice.",
+      "notes": "Lunch at Tian Tian Chicken Rice, asked for less chicken skin",
+      "created_at": "2026-09-12T12:45:00Z"
+    }
+  ],
+  "weight_logs": [
+    {
+      "id": "w-1",
+      "date": "2026-09-06",
+      "weight_kg": 72.8
+    },
+    {
+      "id": "w-2",
+      "date": "2026-09-08",
+      "weight_kg": 72.5
+    },
+    {
+      "id": "w-3",
+      "date": "2026-09-10",
+      "weight_kg": 72.2
+    },
+    {
+      "id": "w-4",
+      "date": "2026-09-12",
+      "weight_kg": 72
+    }
+  ],
+  "water_logs": {
+    "2026-09-12": 1250
+  },
+  "meal_plans": {}
+}

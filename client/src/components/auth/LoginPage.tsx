@@ -1,0 +1,212 @@
+import React, { useState } from 'react';
+import { Mail, Lock, User, Eye, EyeOff, Sparkles, ArrowRight, ShieldCheck, Utensils } from 'lucide-react';
+import { api } from '../../services/api';
+import { UserProfile } from '../../types';
+
+interface LoginPageProps {
+  onLoginSuccess: (token: string, user: { id: string; name: string; email: string }, profile: UserProfile) => void;
+}
+
+export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
+  const [isSignUp, setIsSignUp] = useState(false);
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setLoading(true);
+
+    try {
+      if (isSignUp) {
+        if (!name.trim()) {
+          throw new Error('Please enter your name.');
+        }
+        const res = await api.register({ name: name.trim(), email: email.trim(), password });
+        onLoginSuccess(res.token, res.user, res.profile);
+      } else {
+        const res = await api.login({ email: email.trim(), password });
+        onLoginSuccess(res.token, res.user, res.profile);
+      }
+    } catch (err: any) {
+      setError(err.message || 'Authentication failed. Please check your credentials.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleQuickDemo = async () => {
+    setError(null);
+    setLoading(true);
+    try {
+      const res = await api.login({ email: 'demo@hawker.sg', password: 'hawker123' });
+      onLoginSuccess(res.token, res.user, res.profile);
+    } catch (err: any) {
+      setError(err.message || 'Demo sign-in failed.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-[#FAF7F2] flex items-center justify-center p-4">
+      <div className="w-full max-w-sm bg-white rounded-3xl border border-stone-200 shadow-2xl p-6 space-y-5 animate-scale-in relative overflow-hidden">
+        
+        {/* Subtle decorative gradient top bar */}
+        <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-[#D9381E] via-[#EA580C] to-amber-400" />
+
+        {/* Brand Header */}
+        <div className="text-center pt-2 space-y-1">
+          <div className="w-14 h-14 mx-auto rounded-2xl bg-gradient-to-br from-[#D9381E] to-[#EA580C] flex items-center justify-center text-white shadow-float mb-2 animate-float">
+            <Utensils className="w-7 h-7" />
+          </div>
+          <h1 className="text-xl font-black text-slate-900 tracking-tight">
+            Googoogaga
+          </h1>
+          <p className="text-xs text-stone-500 font-semibold">
+            Singapore Hawker AI Nutrition Tracker
+          </p>
+        </div>
+
+        {/* Mode Toggle Tabs */}
+        <div className="flex bg-stone-100 p-1 rounded-2xl border border-stone-200">
+          <button
+            type="button"
+            onClick={() => { setIsSignUp(false); setError(null); }}
+            className={`flex-1 py-2 rounded-xl text-xs font-black transition-all ${
+              !isSignUp ? 'bg-white text-slate-900 shadow-sm' : 'text-stone-500 hover:text-slate-800'
+            }`}
+          >
+            Sign In
+          </button>
+          <button
+            type="button"
+            onClick={() => { setIsSignUp(true); setError(null); }}
+            className={`flex-1 py-2 rounded-xl text-xs font-black transition-all ${
+              isSignUp ? 'bg-white text-slate-900 shadow-sm' : 'text-stone-500 hover:text-slate-800'
+            }`}
+          >
+            Create Account
+          </button>
+        </div>
+
+        {/* Error Alert */}
+        {error && (
+          <div className="p-3 bg-red-50 border border-red-200 rounded-2xl text-xs text-red-700 font-medium animate-fade-slide-up">
+            {error}
+          </div>
+        )}
+
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="space-y-3.5">
+          {isSignUp && (
+            <div className="space-y-1">
+              <label className="text-[11px] font-bold text-slate-700 block">Your Name</label>
+              <div className="relative">
+                <User className="w-4 h-4 text-stone-400 absolute left-3 top-3" />
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. Tan Ah Hock"
+                  value={name}
+                  onChange={e => setName(e.target.value)}
+                  className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-stone-200 text-xs font-semibold text-slate-900 placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-[#D9381E]/20 focus:border-[#D9381E] transition-all"
+                />
+              </div>
+            </div>
+          )}
+
+          <div className="space-y-1">
+            <label className="text-[11px] font-bold text-slate-700 block">Email Address</label>
+            <div className="relative">
+              <Mail className="w-4 h-4 text-stone-400 absolute left-3 top-3" />
+              <input
+                type="email"
+                required
+                placeholder="you@domain.com"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-stone-200 text-xs font-semibold text-slate-900 placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-[#D9381E]/20 focus:border-[#D9381E] transition-all"
+              />
+            </div>
+          </div>
+
+          <div className="space-y-1">
+            <label className="text-[11px] font-bold text-slate-700 block">Password</label>
+            <div className="relative">
+              <Lock className="w-4 h-4 text-stone-400 absolute left-3 top-3" />
+              <input
+                type={showPassword ? 'text' : 'password'}
+                required
+                placeholder="At least 6 characters"
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                className="w-full pl-9 pr-10 py-2.5 rounded-xl border border-stone-200 text-xs font-semibold text-slate-900 placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-[#D9381E]/20 focus:border-[#D9381E] transition-all"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-3 text-stone-400 hover:text-stone-600 transition-colors"
+              >
+                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
+            </div>
+          </div>
+
+          {/* Submit Button */}
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full py-3.5 bg-gradient-to-r from-[#D9381E] to-[#EA580C] hover:opacity-95 active:scale-[0.98] text-white rounded-2xl font-black text-xs flex items-center justify-center space-x-2 shadow-float transition-all press-anim mt-2"
+          >
+            {loading ? (
+              <svg className="w-4 h-4 animate-spin text-white" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.4 0 0 5.4 0 12h4z" />
+              </svg>
+            ) : (
+              <>
+                <span>{isSignUp ? 'Create My Account' : 'Sign In to Tracker'}</span>
+                <ArrowRight className="w-4 h-4 stroke-[2.5]" />
+              </>
+            )}
+          </button>
+        </form>
+
+        {/* Divider */}
+        <div className="relative flex py-1 items-center">
+          <div className="flex-grow border-t border-stone-200" />
+          <span className="flex-shrink mx-3 text-[10px] uppercase font-bold text-stone-400">or preview with</span>
+          <div className="flex-grow border-t border-stone-200" />
+        </div>
+
+        {/* One-Click Demo Button */}
+        <button
+          type="button"
+          onClick={handleQuickDemo}
+          disabled={loading}
+          className="w-full py-2.5 bg-stone-50 hover:bg-stone-100 active:scale-[0.98] text-stone-700 rounded-2xl font-bold text-xs flex items-center justify-center space-x-2 border border-stone-200 transition-all press-anim"
+        >
+          <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+          <span>One-Click Singapore Demo Account</span>
+        </button>
+
+        {/* Footer Feature Badges */}
+        <div className="pt-2 border-t border-stone-100 flex items-center justify-center space-x-4 text-[10px] text-stone-400 font-semibold">
+          <span className="flex items-center space-x-1">
+            <ShieldCheck className="w-3 h-3 text-emerald-500" />
+            <span>SQLite Database</span>
+          </span>
+          <span>•</span>
+          <span>80+ Hawker Catalog</span>
+          <span>•</span>
+          <span>Self-Learning AI</span>
+        </div>
+      </div>
+    </div>
+  );
+};
