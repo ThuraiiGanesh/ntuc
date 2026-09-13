@@ -1,6 +1,7 @@
 import { Capacitor } from '@capacitor/core';
 import { DailySummary, FoodLogEntry, HawkerDish, NextRecommendation, UserProfile, VisionResult, IngredientItem } from '../types';
 import { HAWKER_DISHES } from '../data/hawkerData';
+import { getBestGeminiKey } from './geminiClient';
 
 // ─── Safe AbortSignal timeout polyfill ──────────────────────────────────────
 // AbortSignal.timeout is NOT available in older Android WebViews.
@@ -846,7 +847,7 @@ export const api = {
     mimeType?: string;
     customApiKey?: string;
   }): Promise<VisionResult> {
-    const key = params.customApiKey || (typeof window !== 'undefined' ? localStorage.getItem('hawker_gemini_api_key') || undefined : undefined);
+    const key = params.customApiKey || getBestGeminiKey();
     try {
       const res = await safeFetch(`${getBaseUrl()}/vision/identify`, {
         method: 'POST',
