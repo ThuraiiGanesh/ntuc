@@ -848,16 +848,34 @@ export const api = {
     customApiKey?: string;
   }): Promise<VisionResult> {
     const key = params.customApiKey || getBestGeminiKey();
+
+    // 1. Try server endpoint first (e.g. when running full-stack or Vercel API)
     try {
       const res = await safeFetch(`${getBaseUrl()}/vision/identify`, {
         method: 'POST',
         headers: getAuthHeaders(),
         body: JSON.stringify({ ...params, customApiKey: key }),
-        timeoutMs: 25000
+        timeoutMs: 15000
       });
       const data = await safeJson<any>(res);
       if (res && res.ok && data) return data;
     } catch {}
+
+    // 2. Direct client-side Gemini Vision fallback (essential for static GitHub Pages / offline)
+    if (params.imageBase64 && key) {
+      try {
+        const { identifyFoodWithGemini } = await import('./geminiClient');
+        const directResult = await identifyFoodWithGemini(
+          params.imageBase64,
+          params.mimeType || 'image/jpeg',
+          key
+        );
+        if (directResult && directResult.dish_name) return directResult;
+      } catch (clientErr) {
+        console.warn('Direct client-side Gemini Vision failed:', clientErr);
+      }
+    }
+
 
     const targetDish = params.sampleDishId
       ? (HAWKER_DISHES.find(d => d.id === params.sampleDishId) || HAWKER_DISHES[0])
