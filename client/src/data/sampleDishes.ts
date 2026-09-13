@@ -11,18 +11,10 @@ export const SAMPLE_HAWKER_DISHES: SampleDish[] = [
   {
     id: 'chicken-rice-steamed',
     name: 'Steamed Chicken Rice',
-    name_local: '白鸡饭',
+    name_local: '白鸡饭 (Bai Ji Fan)',
     category: 'Chinese',
-    image_url: 'https://images.unsplash.com/photo-1544025162-d76694265947?w=600&q=80',
+    image_url: 'https://images.unsplash.com/photo-1512058564366-18510be2db19?w=600&q=80',
     badge: 'National Icon'
-  },
-  {
-    id: 'laksa-singapore',
-    name: 'Katong Laksa',
-    name_local: '加东叻沙',
-    category: 'Peranakan',
-    image_url: 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=600&q=80',
-    badge: 'Rich Coconut Curry'
   },
   {
     id: 'char-kway-teow',
@@ -31,6 +23,14 @@ export const SAMPLE_HAWKER_DISHES: SampleDish[] = [
     category: 'Chinese',
     image_url: 'https://images.unsplash.com/photo-1585032226651-759b368d7246?w=600&q=80',
     badge: 'Smoky Wok Hei'
+  },
+  {
+    id: 'laksa-singapore',
+    name: 'Katong Laksa',
+    name_local: '加东叻沙',
+    category: 'Peranakan',
+    image_url: 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=600&q=80',
+    badge: 'Rich Coconut Curry'
   },
   {
     id: 'nasi-lemak-set',
@@ -53,7 +53,7 @@ export const SAMPLE_HAWKER_DISHES: SampleDish[] = [
     name: 'Ban Mian Soup',
     name_local: '板面 (汤)',
     category: 'Chinese',
-    image_url: 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=600&q=80',
+    image_url: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&q=80',
     badge: 'Healthy Hand-pulled'
   },
   {

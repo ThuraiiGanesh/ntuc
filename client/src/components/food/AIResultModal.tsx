@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { Check, X, Sliders, AlertCircle, Sparkles, ChevronDown, RefreshCw, Droplets, Flame } from 'lucide-react';
 import confetti from 'canvas-confetti';
-import { VisionResult, FoodLogEntry, OilinessLevel } from '../../types';
-import { api } from '../../services/api';
+import { VisionResult, FoodLogEntry, OilinessLevel, IngredientItem } from '../../types';
+import { api, getCuratedIngredientsForDish } from '../../services/api';
+import { HAWKER_DISHES } from '../../data/hawkerData';
 
 interface AIResultModalProps {
   isOpen: boolean;
@@ -29,6 +30,24 @@ export const AIResultModal: React.FC<AIResultModalProps> = ({
   const [selectedDishId, setSelectedDishId] = useState(result.dish_id || 'custom');
   const [category, setCategory] = useState(result.category);
 
+  // Initial Curated Ingredients & Nutrition
+  const initialIngredients = result.ingredients_breakdown && result.ingredients_breakdown.length > 0
+    ? result.ingredients_breakdown
+    : (() => {
+        const d = HAWKER_DISHES.find(item => item.id === result.dish_id) || HAWKER_DISHES[0];
+        return getCuratedIngredientsForDish(d);
+      })();
+
+  const [currentIngredients, setCurrentIngredients] = useState<IngredientItem[]>(initialIngredients);
+  const [baseNutrition, setBaseNutrition] = useState({
+    cal: result.calories,
+    p: result.protein_g,
+    c: result.carbs_g,
+    f: result.fat_g,
+    na: result.sodium_mg,
+    sugar: result.sugar_g
+  });
+
   // Portion State
   const [multiplier, setMultiplier] = useState<number>(result.portion_multiplier || 1.0);
   const [portionLabel, setPortionLabel] = useState<'small' | 'regular' | 'large' | 'custom'>('regular');
@@ -52,12 +71,12 @@ export const AIResultModal: React.FC<AIResultModalProps> = ({
   const currentOilDeltaCals = currentOilDeltaFat * 9;
 
   // Live Recalculated Nutrition based on Multiplier & Oiliness Level
-  const baseCal = result.calories;
-  const baseP = result.protein_g;
-  const baseC = result.carbs_g;
-  const baseF = result.fat_g;
-  const baseNa = result.sodium_mg;
-  const baseSugar = result.sugar_g;
+  const baseCal = baseNutrition.cal;
+  const baseP = baseNutrition.p;
+  const baseC = baseNutrition.c;
+  const baseF = baseNutrition.f;
+  const baseNa = baseNutrition.na;
+  const baseSugar = baseNutrition.sugar;
 
   const adjustedBaseFat = Math.max(1, baseF + currentOilDeltaFat);
   const adjustedBaseCal = Math.max(50, Math.round(baseCal + currentOilDeltaCals));
@@ -86,6 +105,19 @@ export const AIResultModal: React.FC<AIResultModalProps> = ({
     setSelectedDishName(alt.dish_name);
     setSelectedLocalName(alt.name_local);
     setSelectedDishId(alt.dish_id);
+    const matched = HAWKER_DISHES.find(d => d.id === alt.dish_id);
+    if (matched) {
+      setCategory(matched.category);
+      setBaseNutrition({
+        cal: matched.calories,
+        p: matched.protein_g,
+        c: matched.carbs_g,
+        f: matched.fat_g,
+        na: matched.sodium_mg,
+        sugar: matched.sugar_g
+      });
+      setCurrentIngredients(getCuratedIngredientsForDish(matched));
+    }
   };
 
   const handleConfirmLog = async () => {
@@ -106,7 +138,7 @@ export const AIResultModal: React.FC<AIResultModalProps> = ({
         fat_g: currentF,
         sodium_mg: currentNa,
         sugar_g: currentSugar,
-        photo_url: photoUrl || 'https://images.unsplash.com/photo-1544025162-d76694265947?w=400&q=80',
+        photo_url: photoUrl || 'https://images.unsplash.com/photo-1512058564366-18510be2db19?w=400&q=80',
         healthier_alternative: result.healthier_alternative,
         oiliness_level: selectedOilLevel,
         notes
@@ -141,6 +173,12 @@ export const AIResultModal: React.FC<AIResultModalProps> = ({
     } finally {
       setSaving(false);
     }
+  };
+
+  const formatConfidence = (conf: number | undefined): string => {
+    if (!conf) return '95%';
+    const val = conf > 1 ? Math.min(99, Math.round(conf)) : Math.min(99, Math.round(conf * 100));
+    return `${val}% match`;
   };
 
   return (
@@ -182,7 +220,7 @@ export const AIResultModal: React.FC<AIResultModalProps> = ({
               <div className="absolute top-2.5 right-2.5">
                 <span className="inline-flex items-center space-x-1 bg-black/50 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-1 rounded-full border border-white/20">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                  <span>{Math.round(result.confidence * 100)}% match</span>
+                  <span>{formatConfidence(result.confidence)}</span>
                 </span>
               </div>
             </div>
@@ -208,7 +246,7 @@ export const AIResultModal: React.FC<AIResultModalProps> = ({
               {/* Confidence badge & Model Source */}
               <div className="text-right flex flex-col items-end gap-1">
                 <span className="inline-flex items-center space-x-1 bg-emerald-50 border border-emerald-200 text-emerald-700 text-[11px] font-bold px-2 py-0.5 rounded-lg">
-                  <span>{Math.round(result.confidence * 100)}% match</span>
+                  <span>{formatConfidence(result.confidence)}</span>
                 </span>
                 {result.source === 'google_gemini' ? (
                   <span className="inline-flex items-center space-x-1 bg-blue-50 border border-blue-200 text-blue-700 text-[10px] font-extrabold px-2 py-0.5 rounded-md">
@@ -238,7 +276,7 @@ export const AIResultModal: React.FC<AIResultModalProps> = ({
             )}
 
             {/* Visual Ingredient Breakdown (Google Gemini Multimodal Analysis) */}
-            {result.ingredients_breakdown && result.ingredients_breakdown.length > 0 && (
+            {currentIngredients && currentIngredients.length > 0 && (
               <div className="mt-3.5 pt-3 border-t border-stone-200/80">
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center space-x-1.5">
@@ -249,7 +287,7 @@ export const AIResultModal: React.FC<AIResultModalProps> = ({
                   </div>
                   <span className="text-[10px] font-extrabold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-100">
                     {Math.round(
-                      result.ingredients_breakdown.reduce((sum, item) => sum + (item.estimated_weight_g || 0), 0) * multiplier
+                      currentIngredients.reduce((sum, item) => sum + (item.estimated_weight_g || 0), 0) * multiplier
                     )}g total
                   </span>
                 </div>
@@ -258,7 +296,7 @@ export const AIResultModal: React.FC<AIResultModalProps> = ({
                 </p>
 
                 <div className="space-y-1.5 max-h-48 overflow-y-auto pr-0.5">
-                  {result.ingredients_breakdown.map((ing, idx) => {
+                  {currentIngredients.map((ing, idx) => {
                     const scaledWeight = Math.round(ing.estimated_weight_g * multiplier);
                     const scaledCals = Math.round(ing.calories * multiplier);
                     const scaledP = Math.round(ing.protein_g * multiplier);

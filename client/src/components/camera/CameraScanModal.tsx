@@ -80,16 +80,52 @@ export const CameraScanModal: React.FC<CameraScanModalProps> = ({
     }
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const compressImageFile = (file: File): Promise<string> => {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const raw = e.target?.result as string;
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const MAX_DIM = 1024;
+          let { width, height } = img;
+          if (width > height) {
+            if (width > MAX_DIM) {
+              height = Math.round((height * MAX_DIM) / width);
+              width = MAX_DIM;
+            }
+          } else {
+            if (height > MAX_DIM) {
+              width = Math.round((width * MAX_DIM) / height);
+              height = MAX_DIM;
+            }
+          }
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          if (ctx) {
+            ctx.drawImage(img, 0, 0, width, height);
+            resolve(canvas.toDataURL('image/jpeg', 0.82));
+          } else {
+            resolve(raw);
+          }
+        };
+        img.onerror = () => resolve(raw);
+        img.src = raw;
+      };
+      reader.onerror = () => resolve('');
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      const dataUrl = reader.result as string;
-      setPreviewUrl(dataUrl);
-      processImage(dataUrl);
-    };
-    reader.readAsDataURL(file);
+    const compressedDataUrl = await compressImageFile(file);
+    if (!compressedDataUrl) return;
+    setPreviewUrl(compressedDataUrl);
+    processImage(compressedDataUrl);
   };
 
   const handleSampleClick = (sample: SampleDish) => {

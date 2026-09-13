@@ -1,5 +1,5 @@
 import { Capacitor } from '@capacitor/core';
-import { DailySummary, FoodLogEntry, HawkerDish, NextRecommendation, UserProfile, VisionResult } from '../types';
+import { DailySummary, FoodLogEntry, HawkerDish, NextRecommendation, UserProfile, VisionResult, IngredientItem } from '../types';
 import { HAWKER_DISHES } from '../data/hawkerData';
 
 // ─── Safe AbortSignal timeout polyfill ──────────────────────────────────────
@@ -136,6 +136,522 @@ async function safeJson<T = any>(res: Response | null): Promise<T | null> {
     return JSON.parse(text) as T;
   } catch {
     return null;
+  }
+}
+
+// ─── Curated Authentic Hawker Ingredients Breakdown ─────────────────────────
+export function getCuratedIngredientsForDish(dish: HawkerDish): IngredientItem[] {
+  switch (dish.id) {
+    case 'chicken-rice-steamed':
+    case 'chicken-rice-roasted':
+      return [
+        {
+          ingredient: dish.id === 'chicken-rice-roasted' ? 'Roasted Golden Chicken (Thigh & Breast)' : 'Poached Steamed Chicken (Thigh & Breast)',
+          estimated_weight_g: 130,
+          calories: 270,
+          protein_g: 24,
+          carbs_g: 0,
+          fat_g: 18,
+          notes: 'Tender poultry with seasoned skin'
+        },
+        {
+          ingredient: 'Fragrant Chicken Rice (Oiled Jasmine Rice with Ginger)',
+          estimated_weight_g: 190,
+          calories: 285,
+          protein_g: 5,
+          carbs_g: 54,
+          fat_g: 6,
+          notes: 'Infused with chicken stock & garlic'
+        },
+        {
+          ingredient: 'Fresh Cucumber Slices',
+          estimated_weight_g: 30,
+          calories: 5,
+          protein_g: 0,
+          carbs_g: 1,
+          fat_g: 0,
+          notes: 'Hydrating vegetable garnishing'
+        },
+        {
+          ingredient: 'Hawker Garlic Chili & Dark Soy Sauce',
+          estimated_weight_g: 25,
+          calories: 47,
+          protein_g: 1,
+          carbs_g: 6,
+          fat_g: 1,
+          notes: 'Tangy calamansi chili dip'
+        }
+      ];
+
+    case 'char-kway-teow':
+      return [
+        {
+          ingredient: 'Flat Rice Noodles (Kway Teow) & Yellow Noodles',
+          estimated_weight_g: 175,
+          calories: 270,
+          protein_g: 4,
+          carbs_g: 58,
+          fat_g: 2,
+          notes: 'Smoky wok-hei charred noodles'
+        },
+        {
+          ingredient: 'Dark Sweet Molasses Soy Sauce & Cooking Oil',
+          estimated_weight_g: 30,
+          calories: 210,
+          protein_g: 1,
+          carbs_g: 11,
+          fat_g: 18,
+          notes: 'Caramelized wok seasoning'
+        },
+        {
+          ingredient: 'Chinese Sausage (Lap Cheong) & Pork Lard',
+          estimated_weight_g: 30,
+          calories: 135,
+          protein_g: 4,
+          carbs_g: 2,
+          fat_g: 12,
+          notes: 'Crispy aromatic cured sausage'
+        },
+        {
+          ingredient: 'Wok Scrambled Egg',
+          estimated_weight_g: 50,
+          calories: 75,
+          protein_g: 6,
+          carbs_g: 0,
+          fat_g: 5,
+          notes: 'Stir-fried egg ribbons'
+        },
+        {
+          ingredient: 'Fresh Bean Sprouts, Chives & Cockles',
+          estimated_weight_g: 60,
+          calories: 55,
+          protein_g: 7,
+          carbs_g: 5,
+          fat_g: 1,
+          notes: 'Crunchy fiber & seafood'
+        }
+      ];
+
+    case 'laksa-singapore':
+      return [
+        {
+          ingredient: 'Thick Rice Vermicelli (Bee Hoon)',
+          estimated_weight_g: 160,
+          calories: 185,
+          protein_g: 3,
+          carbs_g: 40,
+          fat_g: 1,
+          notes: 'Cut noodles eaten with soup spoon'
+        },
+        {
+          ingredient: 'Spicy Coconut Milk Curry Broth',
+          estimated_weight_g: 180,
+          calories: 235,
+          protein_g: 4,
+          carbs_g: 9,
+          fat_g: 21,
+          notes: 'Rich coconut milk with dried shrimp'
+        },
+        {
+          ingredient: 'Fresh Prawns & Cockles',
+          estimated_weight_g: 45,
+          calories: 60,
+          protein_g: 12,
+          carbs_g: 1,
+          fat_g: 1,
+          notes: 'Lean seafood protein'
+        },
+        {
+          ingredient: 'Fried Tau Pok (Tofu Puffs)',
+          estimated_weight_g: 30,
+          calories: 85,
+          protein_g: 4,
+          carbs_g: 2,
+          fat_g: 7,
+          notes: 'Soaks up rich curry gravy'
+        },
+        {
+          ingredient: 'Fishcake Slices & Laksa Leaves',
+          estimated_weight_g: 25,
+          calories: 25,
+          protein_g: 3,
+          carbs_g: 2,
+          fat_g: 0,
+          notes: 'Finely minced aromatic daun kesum'
+        }
+      ];
+
+    case 'nasi-lemak-set':
+      return [
+        {
+          ingredient: 'Coconut Pandan Rice',
+          estimated_weight_g: 185,
+          calories: 290,
+          protein_g: 5,
+          carbs_g: 52,
+          fat_g: 7,
+          notes: 'Fragrant santan rice'
+        },
+        {
+          ingredient: 'Spiced Deep-Fried Chicken Wing',
+          estimated_weight_g: 85,
+          calories: 240,
+          protein_g: 16,
+          carbs_g: 4,
+          fat_g: 17,
+          notes: 'Crispy golden spiced batter'
+        },
+        {
+          ingredient: 'Sunny Side Up Fried Egg',
+          estimated_weight_g: 50,
+          calories: 90,
+          protein_g: 6,
+          carbs_g: 0,
+          fat_g: 7,
+          notes: 'Runny yolk protein'
+        },
+        {
+          ingredient: 'Fried Ikan Bilis (Anchovies) & Peanuts',
+          estimated_weight_g: 25,
+          calories: 85,
+          protein_g: 4,
+          carbs_g: 3,
+          fat_g: 6,
+          notes: 'Crunchy calcium rich toppings'
+        },
+        {
+          ingredient: 'Sweet-Spicy Sambal Tumis & Cucumber',
+          estimated_weight_g: 35,
+          calories: 50,
+          protein_g: 1,
+          carbs_g: 8,
+          fat_g: 2,
+          notes: 'Slow-cooked chili paste'
+        }
+      ];
+
+    case 'roti-prata-plain-2pcs':
+      return [
+        {
+          ingredient: 'Layered Wheat Dough with Ghee (2 pcs)',
+          estimated_weight_g: 160,
+          calories: 360,
+          protein_g: 8,
+          carbs_g: 48,
+          fat_g: 16,
+          notes: 'Crispy flaky griddled flatbread'
+        },
+        {
+          ingredient: 'Yellow Dhal / Fish Curry Dip',
+          estimated_weight_g: 60,
+          calories: 80,
+          protein_g: 2,
+          carbs_g: 6,
+          fat_g: 4,
+          notes: 'Spiced aromatic dipping gravy'
+        }
+      ];
+
+    case 'ban-mian-soup':
+      return [
+        {
+          ingredient: 'Handmade Flat Wheat Noodles',
+          estimated_weight_g: 160,
+          calories: 240,
+          protein_g: 7,
+          carbs_g: 49,
+          fat_g: 1,
+          notes: 'Fresh hand-kneaded noodles'
+        },
+        {
+          ingredient: 'Anchovy & Soybean Clear Broth',
+          estimated_weight_g: 200,
+          calories: 45,
+          protein_g: 3,
+          carbs_g: 2,
+          fat_g: 1,
+          notes: 'Simmered clear savory soup'
+        },
+        {
+          ingredient: 'Minced Pork Patty',
+          estimated_weight_g: 60,
+          calories: 125,
+          protein_g: 12,
+          carbs_g: 1,
+          fat_g: 7,
+          notes: 'Lean seasoned pork'
+        },
+        {
+          ingredient: 'Poached Egg',
+          estimated_weight_g: 50,
+          calories: 72,
+          protein_g: 6,
+          carbs_g: 0,
+          fat_g: 5,
+          notes: 'Soft cooked whole egg'
+        },
+        {
+          ingredient: 'Mani Cai (Sayur Manis) & Crispy Anchovies',
+          estimated_weight_g: 40,
+          calories: 38,
+          protein_g: 3,
+          carbs_g: 4,
+          fat_g: 1,
+          notes: 'Sweet leafy greens & crunchy ikan bilis'
+        }
+      ];
+
+    case 'popiah-fresh':
+      return [
+        {
+          ingredient: 'Handmade Wheat Popiah Skin (2 rolls)',
+          estimated_weight_g: 80,
+          calories: 110,
+          protein_g: 3,
+          carbs_g: 22,
+          fat_g: 1,
+          notes: 'Soft paper-thin rolls'
+        },
+        {
+          ingredient: 'Braised Turnip (Jicama) & Carrots',
+          estimated_weight_g: 160,
+          calories: 75,
+          protein_g: 2,
+          carbs_g: 14,
+          fat_g: 1,
+          notes: 'Slow-stewed sweet jicama'
+        },
+        {
+          ingredient: 'Boiled Egg, Firm Tofu & Bean Sprouts',
+          estimated_weight_g: 50,
+          calories: 65,
+          protein_g: 6,
+          carbs_g: 1,
+          fat_g: 4,
+          notes: 'Protein & fiber filling'
+        },
+        {
+          ingredient: 'Crushed Peanuts, Sweet Sauce & Sambal',
+          estimated_weight_g: 30,
+          calories: 95,
+          protein_g: 3,
+          carbs_g: 9,
+          fat_g: 6,
+          notes: 'Nutty savory condiment'
+        }
+      ];
+
+    case 'kaya-toast-set':
+      return [
+        {
+          ingredient: 'Charcoal Grilled White Toast with Kaya & Butter',
+          estimated_weight_g: 110,
+          calories: 280,
+          protein_g: 5,
+          carbs_g: 36,
+          fat_g: 13,
+          notes: 'Pandan coconut jam & cold butter'
+        },
+        {
+          ingredient: 'Half-Boiled Eggs (2 pcs) with Dark Soy & Pepper',
+          estimated_weight_g: 100,
+          calories: 144,
+          protein_g: 12,
+          carbs_g: 1,
+          fat_g: 10,
+          notes: 'Silky kopitiam breakfast eggs'
+        },
+        {
+          ingredient: 'Traditional Kopi (Coffee with condensed milk)',
+          estimated_weight_g: 200,
+          calories: 65,
+          protein_g: 1,
+          carbs_g: 15,
+          fat_g: 0,
+          notes: 'Nanyang robusta roast'
+        }
+      ];
+
+    case 'fish-soup-bee-hoon':
+    case 'sliced-fish-soup':
+      return [
+        {
+          ingredient: 'Fresh Batang Fish Fillet Slices',
+          estimated_weight_g: 110,
+          calories: 115,
+          protein_g: 23,
+          carbs_g: 0,
+          fat_g: 2,
+          notes: 'Lean fresh Spanish mackerel'
+        },
+        {
+          ingredient: 'Thin Rice Vermicelli (Bee Hoon)',
+          estimated_weight_g: 150,
+          calories: 160,
+          protein_g: 3,
+          carbs_g: 36,
+          fat_g: 0,
+          notes: 'Steamed rice noodles'
+        },
+        {
+          ingredient: 'Clear Fish Bone, Ginger & Tomato Broth',
+          estimated_weight_g: 220,
+          calories: 45,
+          protein_g: 2,
+          carbs_g: 3,
+          fat_g: 1,
+          notes: 'Nourishing low-fat broth'
+        },
+        {
+          ingredient: 'Bittergourd, Silken Tofu & Chye Sim',
+          estimated_weight_g: 60,
+          calories: 25,
+          protein_g: 1,
+          carbs_g: 4,
+          fat_g: 0,
+          notes: 'Antioxidant greens'
+        }
+      ];
+
+    case 'bak-chor-mee-dry':
+      return [
+        {
+          ingredient: 'Mee Pok / Mee Kia (Egg Noodles)',
+          estimated_weight_g: 150,
+          calories: 250,
+          protein_g: 7,
+          carbs_g: 48,
+          fat_g: 2,
+          notes: 'Springy egg noodles'
+        },
+        {
+          ingredient: 'Black Vinegar, Chili & Lard Sauce',
+          estimated_weight_g: 25,
+          calories: 120,
+          protein_g: 1,
+          carbs_g: 4,
+          fat_g: 11,
+          notes: 'Tangy savory dressing'
+        },
+        {
+          ingredient: 'Minced Pork, Lean Pork Slices & Liver',
+          estimated_weight_g: 80,
+          calories: 140,
+          protein_g: 18,
+          carbs_g: 1,
+          fat_g: 7,
+          notes: 'Savory meat mix'
+        },
+        {
+          ingredient: 'Braised Mushrooms & Crispy Sole Fish (Ti Po)',
+          estimated_weight_g: 30,
+          calories: 45,
+          protein_g: 3,
+          carbs_g: 4,
+          fat_g: 1,
+          notes: 'Umami mushroom slices'
+        },
+        {
+          ingredient: 'Pork Meatballs & Lettuce',
+          estimated_weight_g: 40,
+          calories: 60,
+          protein_g: 6,
+          carbs_g: 2,
+          fat_g: 3,
+          notes: 'Handcrafted meatballs'
+        }
+      ];
+
+    case 'hokkien-mee':
+      return [
+        {
+          ingredient: 'Yellow Noodles & Thick Bee Hoon',
+          estimated_weight_g: 170,
+          calories: 260,
+          protein_g: 6,
+          carbs_g: 52,
+          fat_g: 2,
+          notes: 'Braised noodle combination'
+        },
+        {
+          ingredient: 'Rich Prawn Head & Pork Bone Broth',
+          estimated_weight_g: 100,
+          calories: 85,
+          protein_g: 4,
+          carbs_g: 3,
+          fat_g: 6,
+          notes: 'Simmered seafood reduction'
+        },
+        {
+          ingredient: 'Fresh Prawns & Squid (Sotong)',
+          estimated_weight_g: 60,
+          calories: 75,
+          protein_g: 14,
+          carbs_g: 1,
+          fat_g: 1,
+          notes: 'Tender seafood slices'
+        },
+        {
+          ingredient: 'Crispy Pork Belly Strips & Fried Lard',
+          estimated_weight_g: 30,
+          calories: 120,
+          protein_g: 4,
+          carbs_g: 0,
+          fat_g: 11,
+          notes: 'Aromatic crunch'
+        },
+        {
+          ingredient: 'Wok-Fried Egg, Sambal Belacan & Calamansi',
+          estimated_weight_g: 40,
+          calories: 60,
+          protein_g: 4,
+          carbs_g: 3,
+          fat_g: 3,
+          notes: 'Zesty chili & egg'
+        }
+      ];
+
+    default: {
+      // Scaled realistically to the dish's actual nutritional macros
+      const totalG = dish.portion_grams || 380;
+      const baseG = Math.round(totalG * 0.55);
+      const proteinG = Math.round(totalG * 0.28);
+      const sauceG = Math.round(totalG * 0.17);
+
+      const baseCals = Math.round(dish.calories * 0.52);
+      const proteinCals = Math.round(dish.calories * 0.33);
+      const sauceCals = Math.max(10, dish.calories - baseCals - proteinCals);
+
+      return [
+        {
+          ingredient: dish.category === 'Drinks' ? `${dish.name_en} Brew Base` : `${dish.name_en} Primary Base`,
+          estimated_weight_g: baseG,
+          calories: baseCals,
+          protein_g: Math.round(dish.protein_g * 0.25),
+          carbs_g: Math.round(dish.carbs_g * 0.8),
+          fat_g: Math.round(dish.fat_g * 0.25),
+          notes: 'Main carbohydrate & vegetable base'
+        },
+        {
+          ingredient: `${dish.name_en} Protein / Key Elements`,
+          estimated_weight_g: proteinG,
+          calories: proteinCals,
+          protein_g: Math.round(dish.protein_g * 0.7),
+          carbs_g: Math.round(dish.carbs_g * 0.1),
+          fat_g: Math.round(dish.fat_g * 0.45),
+          notes: 'Meats, seafood, tofu or savory ingredients'
+        },
+        {
+          ingredient: 'Hawker Seasoning, Gravy & Garnishing',
+          estimated_weight_g: sauceG,
+          calories: sauceCals,
+          protein_g: Math.round(dish.protein_g * 0.05),
+          carbs_g: Math.max(0, Math.round(dish.carbs_g * 0.1)),
+          fat_g: Math.round(dish.fat_g * 0.3),
+          notes: 'Traditional spice blends and broth oils'
+        }
+      ];
+    }
   }
 }
 
@@ -334,7 +850,7 @@ export const api = {
         method: 'POST',
         headers: getAuthHeaders(),
         body: JSON.stringify(params),
-        timeoutMs: 10000
+        timeoutMs: 20000
       });
       const data = await safeJson<any>(res);
       if (res && res.ok && data) return data;
@@ -344,11 +860,16 @@ export const api = {
       ? (HAWKER_DISHES.find(d => d.id === params.sampleDishId) || HAWKER_DISHES[0])
       : HAWKER_DISHES[0];
 
+    const curatedIngredients = getCuratedIngredientsForDish(targetDish);
+    const related = HAWKER_DISHES
+      .filter(d => d.id !== targetDish.id && (d.category === targetDish.category || d.stall_type === targetDish.stall_type))
+      .slice(0, 3);
+
     return {
       dish_id: targetDish.id,
       dish_name: targetDish.name_en,
       name_local: targetDish.name_local,
-      confidence: 94.5,
+      confidence: 0.95,
       category: targetDish.category,
       estimated_portion_size: targetDish.portion_default,
       portion_multiplier: 1.0,
@@ -358,25 +879,21 @@ export const api = {
       fat_g: targetDish.fat_g,
       sodium_mg: targetDish.sodium_mg,
       sugar_g: targetDish.sugar_g,
-      oiliness_level: 'moderate',
-      oiliness_score: 55,
-      oil_sheen_detected: true,
-      oil_delta_fat_g: 2.5,
+      oiliness_level: targetDish.fat_g > 20 ? 'oily' : targetDish.fat_g < 8 ? 'light' : 'moderate',
+      oiliness_score: targetDish.fat_g > 20 ? 4 : targetDish.fat_g < 8 ? 1 : 3,
+      oil_sheen_detected: targetDish.fat_g >= 12,
+      oil_delta_fat_g: 0,
       oil_notes: 'Moderate surface sheen typical of authentic hawker broth / wok seasoning.',
       healthier_alternative: targetDish.healthier_alternative,
-      ingredients_breakdown: [
-        { ingredient: 'Main Protein / Fish / Chicken', estimated_weight_g: 120, calories: 180, protein_g: 22, carbs_g: 0, fat_g: 6 },
-        { ingredient: 'Noodles / Fragrant Rice', estimated_weight_g: 200, calories: 280, protein_g: 5, carbs_g: 58, fat_g: 4 },
-        { ingredient: 'Broth & Seasoning Oils', estimated_weight_g: 80, calories: 85, protein_g: 2, carbs_g: 4, fat_g: 6 }
-      ],
-      alternative_dishes_if_uncertain: HAWKER_DISHES.slice(1, 4).map(d => ({
+      ingredients_breakdown: curatedIngredients,
+      alternative_dishes_if_uncertain: related.map((d, i) => ({
         dish_id: d.id,
         dish_name: d.name_en,
         name_local: d.name_local,
-        confidence: 82,
+        confidence: Number((0.85 - i * 0.08).toFixed(2)),
         calories: d.calories
       })),
-      ai_notes: 'Recognized with Singapore Hawker Intelligence. Tap portions to adjust grams.',
+      ai_notes: `Recognized with Singapore Hawker Intelligence. Decomposed into ${curatedIngredients.length} authentic ingredients.`,
       source: 'smart_classifier'
     };
   },

@@ -270,6 +270,48 @@ export function getCuratedIngredients(dish: HawkerDish): IngredientItem[] {
         { ingredient: 'Mani Cai (Sayur Manis) & Crispy Ikan Bilis', estimated_weight_g: 40, calories: 38, protein_g: 3, carbs_g: 4, fat_g: 1, notes: 'Iron and antioxidants' }
       ];
 
+    case 'popiah-fresh':
+      return [
+        { ingredient: 'Handmade Wheat Popiah Skin (2 rolls)', estimated_weight_g: 80, calories: 110, protein_g: 3, carbs_g: 22, fat_g: 1, notes: 'Soft paper-thin rolls' },
+        { ingredient: 'Braised Turnip (Jicama) & Carrots', estimated_weight_g: 160, calories: 75, protein_g: 2, carbs_g: 14, fat_g: 1, notes: 'Slow-stewed sweet jicama' },
+        { ingredient: 'Boiled Egg, Firm Tofu & Bean Sprouts', estimated_weight_g: 50, calories: 65, protein_g: 6, carbs_g: 1, fat_g: 4, notes: 'Protein & fiber filling' },
+        { ingredient: 'Crushed Peanuts, Sweet Sauce & Sambal', estimated_weight_g: 30, calories: 95, protein_g: 3, carbs_g: 9, fat_g: 6, notes: 'Nutty savory condiment' }
+      ];
+
+    case 'kaya-toast-set':
+      return [
+        { ingredient: 'Charcoal Grilled White Toast with Kaya & Butter', estimated_weight_g: 110, calories: 280, protein_g: 5, carbs_g: 36, fat_g: 13, notes: 'Pandan coconut jam & cold butter' },
+        { ingredient: 'Half-Boiled Eggs (2 pcs) with Dark Soy & Pepper', estimated_weight_g: 100, calories: 144, protein_g: 12, carbs_g: 1, fat_g: 10, notes: 'Silky kopitiam breakfast eggs' },
+        { ingredient: 'Traditional Kopi (Coffee with condensed milk)', estimated_weight_g: 200, calories: 65, protein_g: 1, carbs_g: 15, fat_g: 0, notes: 'Nanyang robusta roast' }
+      ];
+
+    case 'fish-soup-bee-hoon':
+    case 'sliced-fish-soup':
+      return [
+        { ingredient: 'Fresh Batang Fish Fillet Slices', estimated_weight_g: 110, calories: 115, protein_g: 23, carbs_g: 0, fat_g: 2, notes: 'Lean fresh Spanish mackerel' },
+        { ingredient: 'Thin Rice Vermicelli (Bee Hoon)', estimated_weight_g: 150, calories: 160, protein_g: 3, carbs_g: 36, fat_g: 0, notes: 'Steamed rice noodles' },
+        { ingredient: 'Clear Fish Bone, Ginger & Tomato Broth', estimated_weight_g: 220, calories: 45, protein_g: 2, carbs_g: 3, fat_g: 1, notes: 'Nourishing low-fat broth' },
+        { ingredient: 'Bittergourd, Silken Tofu & Chye Sim', estimated_weight_g: 60, calories: 25, protein_g: 1, carbs_g: 4, fat_g: 0, notes: 'Antioxidant greens' }
+      ];
+
+    case 'bak-chor-mee-dry':
+      return [
+        { ingredient: 'Mee Pok / Mee Kia (Egg Noodles)', estimated_weight_g: 150, calories: 250, protein_g: 7, carbs_g: 48, fat_g: 2, notes: 'Springy egg noodles' },
+        { ingredient: 'Black Vinegar, Chili & Lard Sauce', estimated_weight_g: 25, calories: 120, protein_g: 1, carbs_g: 4, fat_g: 11, notes: 'Tangy savory dressing' },
+        { ingredient: 'Minced Pork, Lean Pork Slices & Liver', estimated_weight_g: 80, calories: 140, protein_g: 18, carbs_g: 1, fat_g: 7, notes: 'Savory meat mix' },
+        { ingredient: 'Braised Mushrooms & Crispy Sole Fish (Ti Po)', estimated_weight_g: 30, calories: 45, protein_g: 3, carbs_g: 4, fat_g: 1, notes: 'Umami mushroom slices' },
+        { ingredient: 'Pork Meatballs & Lettuce', estimated_weight_g: 40, calories: 60, protein_g: 6, carbs_g: 2, fat_g: 3, notes: 'Handcrafted meatballs' }
+      ];
+
+    case 'hokkien-mee':
+      return [
+        { ingredient: 'Yellow Noodles & Thick Bee Hoon', estimated_weight_g: 170, calories: 260, protein_g: 6, carbs_g: 52, fat_g: 2, notes: 'Braised noodle combination' },
+        { ingredient: 'Rich Prawn Head & Pork Bone Broth', estimated_weight_g: 100, calories: 85, protein_g: 4, carbs_g: 3, fat_g: 6, notes: 'Simmered seafood reduction' },
+        { ingredient: 'Fresh Prawns & Squid (Sotong)', estimated_weight_g: 60, calories: 75, protein_g: 14, carbs_g: 1, fat_g: 1, notes: 'Tender seafood slices' },
+        { ingredient: 'Crispy Pork Belly Strips & Fried Lard', estimated_weight_g: 30, calories: 120, protein_g: 4, carbs_g: 0, fat_g: 11, notes: 'Aromatic crunch' },
+        { ingredient: 'Wok-Fried Egg, Sambal Belacan & Calamansi', estimated_weight_g: 40, calories: 60, protein_g: 4, carbs_g: 3, fat_g: 3, notes: 'Zesty chili & egg' }
+      ];
+
     default:
       // Generic breakdown based on macros
       return [
