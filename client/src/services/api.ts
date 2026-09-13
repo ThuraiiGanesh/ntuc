@@ -1,6 +1,26 @@
+import { Capacitor } from '@capacitor/core';
 import { DailySummary, FoodLogEntry, HawkerDish, NextRecommendation, UserProfile, VisionResult } from '../types';
 
-const API_BASE = ((import.meta as any).env?.VITE_API_BASE_URL as string) || ((import.meta as any).env?.DEV ? 'http://localhost:5000/api' : '/api');
+export function getApiBaseUrl(): string {
+  const custom = typeof window !== 'undefined' ? localStorage.getItem('hawker_api_url') : null;
+  if (custom) return custom.replace(/\/+$/, '');
+
+  const envUrl = (import.meta as any).env?.VITE_API_BASE_URL as string;
+  if (envUrl) return envUrl.replace(/\/+$/, '');
+
+  if (Capacitor.isNativePlatform()) {
+    // In Android emulator, 10.0.2.2 is the alias to host computer's localhost
+    return 'http://10.0.2.2:5000/api';
+  }
+
+  return (import.meta as any).env?.DEV ? 'http://localhost:5000/api' : '/api';
+}
+
+const API_BASE = {
+  toString() {
+    return getApiBaseUrl();
+  }
+};
 
 function getAuthHeaders(): Record<string, string> {
   const headers: Record<string, string> = {

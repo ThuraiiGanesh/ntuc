@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Check, Save, HeartPulse, User, LogOut, Mail, Sparkles, BrainCircuit } from 'lucide-react';
+import { X, Check, Save, HeartPulse, User, LogOut, Mail, Sparkles, BrainCircuit, Globe } from 'lucide-react';
 import { UserProfile } from '../../types';
 import { api } from '../../services/api';
 
@@ -31,6 +31,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   const [activityLevel, setActivityLevel] = useState(profile.activity_level);
   const [healthConditions, setHealthConditions] = useState<string[]>(profile.health_conditions || []);
   const [dietary, setDietary] = useState<string[]>(profile.dietary_preferences || ['no_restriction']);
+  const [apiUrl, setApiUrl] = useState(() => (typeof window !== 'undefined' ? localStorage.getItem('hawker_api_url') || '' : ''));
   const [saving, setSaving] = useState(false);
 
   const toggleHealth = (cond: string) => {
@@ -55,6 +56,14 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
         health_conditions: healthConditions,
         dietary_preferences: dietary
       });
+
+      if (typeof window !== 'undefined') {
+        if (apiUrl.trim()) {
+          localStorage.setItem('hawker_api_url', apiUrl.trim());
+        } else {
+          localStorage.removeItem('hawker_api_url');
+        }
+      }
 
       onProfileUpdated(updated);
       onClose();
@@ -260,6 +269,24 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             <p className="text-xs text-stone-600 leading-relaxed">
               Every meal photo you log and verify is saved to the continuous training dataset, progressively sharpening the model's accuracy on authentic Singapore hawker dishes and portion estimation.
             </p>
+          </div>
+
+          {/* Backend API Configuration (Mobile / Android Studio) */}
+          <div className="bg-white p-4 rounded-2xl border border-stone-200 space-y-2.5 shadow-soft">
+            <div className="flex items-center space-x-1.5">
+              <Globe className="w-4 h-4 text-emerald-600" />
+              <h4 className="text-xs font-black text-slate-900 uppercase tracking-wider">Backend Server API</h4>
+            </div>
+            <p className="text-[11px] text-stone-500">
+              Android emulator default: <code className="bg-stone-100 text-stone-700 px-1 py-0.5 rounded text-[10px] font-mono">http://10.0.2.2:5000/api</code>. Leave blank for auto-detect or enter your deployed backend URL.
+            </p>
+            <input
+              type="text"
+              placeholder="e.g. http://10.0.2.2:5000/api or https://your-server.vercel.app/api"
+              value={apiUrl}
+              onChange={e => setApiUrl(e.target.value)}
+              className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-mono text-slate-800 placeholder:text-stone-400 focus:outline-none focus:border-[#D9381E]"
+            />
           </div>
         </div>
 

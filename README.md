@@ -58,7 +58,41 @@ npm run dev
 
 ---
 
+## 📱 Android App (Android Studio)
+
+The app is fully configured for native Android using Capacitor.
+
+### Opening in Android Studio
+You can launch the Android Studio project with one command:
+```bash
+npm run android:open
+```
+*Or manually open the `client/android` folder in Android Studio via `File -> Open`.*
+
+### Building and Running
+1. **Sync Latest Web Changes to Android**:
+   ```bash
+   npm run android:sync
+   ```
+2. **Build Debug APK Directly**:
+   ```bash
+   npm run android:build
+   ```
+   The compiled APK will be located at:
+   `client/android/app/build/outputs/apk/debug/app-debug.apk`
+
+3. **In Android Studio**:
+   - Select your connected Android device or an Android Emulator (AVD) in the top device dropdown.
+   - Click the green **Run (▶)** button or press `Shift + F10`.
+
+### Backend API Configuration on Android
+- **Android Emulator**: Automatically routes to your computer's local backend at `http://10.0.2.2:5000/api`.
+- **Physical Phone / Deployed Server**: Open the app, tap **Settings (⚙️)**, scroll to **Backend Server API**, and enter your computer's WiFi IP (e.g. `http://192.168.1.100:5000/api`) or your cloud-deployed backend URL (e.g. `https://your-api.com/api`).
+
+---
+
 ## 🛡️ Default Demo Account
 - **Email**: `demo@hawker.sg`
 - **Password**: `hawker123`
 *(Or click "Create Account" on the login screen to register any new account)*
+
