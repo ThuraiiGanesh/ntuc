@@ -1775,6 +1775,27 @@ export const HAWKER_DISHES: HawkerDish[] = [
     ordering_tips: ['Request less syrup on top', 'Enjoy the palm seeds (attap chee) and red beans underneath'],
     description: 'Spectacular rainbow dome of finely shaved ice concealing sweet treasures like attap seeds, sweet red beans, grass jelly, and creamed corn.',
     image_keyword: 'ice_kachang'
+  },
+  {
+    id: 'plain-water',
+    name_en: 'Plain Water',
+    name_local: '白开水 / 冰水 (Plain / Ice Water)',
+    aliases: ['water', 'plain water', 'ice water', 'mineral water', 'warm water', 'bottled water', 'drinking water'],
+    category: 'Drinks',
+    stall_type: 'Drink Stall',
+    portion_default: '1 glass / bottle (~300ml - 500ml)',
+    portion_grams: 300,
+    calories: 0,
+    protein_g: 0,
+    carbs_g: 0,
+    fat_g: 0,
+    sodium_mg: 0,
+    sugar_g: 0,
+    dietary_flags: ['healthier_choice'],
+    healthier_alternative: 'Pure 0-calorie hydration. The healthiest drink option at any hawker center!',
+    ordering_tips: ['Ask for "Pai Kwee" (warm water) or "Peng Kwee" (iced water)'],
+    description: 'Pure refreshing water with zero calories, zero sugar, and zero fat.',
+    image_keyword: 'plain_water'
   }
 ];
 

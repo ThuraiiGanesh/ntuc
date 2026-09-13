@@ -148,29 +148,31 @@ export async function identifyFoodWithGemini(
     };
   });
 
+  const isZeroCalorie = parsed.calories === 0 || (dishName.includes('water') && !dishName.includes('watermelon'));
+
   return {
     dish_id: matchedLocal?.id || 'custom-ai',
-    dish_name: parsed.dish_name || 'Singapore Hawker Dish',
+    dish_name: parsed.dish_name || (isZeroCalorie ? 'Plain Water' : 'Singapore Hawker Dish'),
     name_local: parsed.name_local || '',
-    confidence: parsed.confidence || 0.85,
-    category: parsed.category || (matchedLocal?.category) || 'Chinese',
-    estimated_portion_size: parsed.estimated_portion_size || '1 portion',
-    portion_multiplier: parsed.portion_multiplier || 1.0,
-    calories: parsed.calories || matchedLocal?.calories || 400,
-    protein_g: parsed.protein_g || matchedLocal?.protein_g || 20,
-    carbs_g: parsed.carbs_g || matchedLocal?.carbs_g || 50,
-    fat_g: parsed.fat_g || matchedLocal?.fat_g || 15,
-    sodium_mg: parsed.sodium_mg || matchedLocal?.sodium_mg || 800,
-    sugar_g: parsed.sugar_g || matchedLocal?.sugar_g || 5,
-    oiliness_level: parsed.oiliness_level || 'moderate',
-    oiliness_score: parsed.oiliness_score || 3,
-    oil_sheen_detected: parsed.oil_sheen_detected ?? true,
-    oil_delta_fat_g: parsed.oil_delta_fat_g || 0,
-    oil_notes: parsed.oil_notes || 'Standard hawker preparation.',
-    healthier_alternative: parsed.healthier_alternative || matchedLocal?.healthier_alternative || 'Opt for less oil and more vegetables',
+    confidence: parsed.confidence ?? 0.95,
+    category: parsed.category || (matchedLocal?.category) || (isZeroCalorie ? 'Drinks' : 'Chinese'),
+    estimated_portion_size: parsed.estimated_portion_size || '1 glass (~250ml)',
+    portion_multiplier: parsed.portion_multiplier ?? 1.0,
+    calories: isZeroCalorie ? 0 : (parsed.calories ?? (matchedLocal?.calories ?? 400)),
+    protein_g: isZeroCalorie ? 0 : (parsed.protein_g ?? (matchedLocal?.protein_g ?? 20)),
+    carbs_g: isZeroCalorie ? 0 : (parsed.carbs_g ?? (matchedLocal?.carbs_g ?? 50)),
+    fat_g: isZeroCalorie ? 0 : (parsed.fat_g ?? (matchedLocal?.fat_g ?? 15)),
+    sodium_mg: isZeroCalorie ? 0 : (parsed.sodium_mg ?? (matchedLocal?.sodium_mg ?? 800)),
+    sugar_g: isZeroCalorie ? 0 : (parsed.sugar_g ?? (matchedLocal?.sugar_g ?? 5)),
+    oiliness_level: isZeroCalorie ? 'light' : (parsed.oiliness_level || 'moderate'),
+    oiliness_score: isZeroCalorie ? 1 : (parsed.oiliness_score || 3),
+    oil_sheen_detected: isZeroCalorie ? false : (parsed.oil_sheen_detected ?? true),
+    oil_delta_fat_g: isZeroCalorie ? 0 : (parsed.oil_delta_fat_g || 0),
+    oil_notes: parsed.oil_notes || (isZeroCalorie ? 'No oil present in water.' : 'Standard hawker preparation.'),
+    healthier_alternative: parsed.healthier_alternative || (isZeroCalorie ? 'Optimal zero-calorie hydration!' : (matchedLocal?.healthier_alternative || 'Opt for less oil and more vegetables')),
     ingredients_breakdown: ingredients,
     alternative_dishes_if_uncertain: alternativeDishes,
-    ai_notes: parsed.ai_notes || `Identified by Gemini Vision AI.`,
+    ai_notes: parsed.ai_notes || (isZeroCalorie ? 'Plain water has 0 calories and zero macros.' : `Identified by Gemini Vision AI.`),
     source: 'google_gemini'
   };
 }

@@ -80,15 +80,17 @@ export const AIResultModal: React.FC<AIResultModalProps> = ({
   const baseNa = baseNutrition.na;
   const baseSugar = baseNutrition.sugar;
 
-  const adjustedBaseFat = Math.max(1, baseF + currentOilDeltaFat);
-  const adjustedBaseCal = Math.max(50, Math.round(baseCal + currentOilDeltaCals));
+  const isZeroCalorie = baseCal === 0 || selectedDishName.toLowerCase().includes('water');
 
-  const currentCal = Math.round(adjustedBaseCal * multiplier);
-  const currentP = Math.round(baseP * multiplier);
-  const currentC = Math.round(baseC * multiplier);
-  const currentF = Math.round(adjustedBaseFat * multiplier);
-  const currentNa = Math.round(baseNa * multiplier);
-  const currentSugar = Math.round(baseSugar * multiplier);
+  const adjustedBaseFat = isZeroCalorie ? 0 : Math.max(0, baseF + currentOilDeltaFat);
+  const adjustedBaseCal = isZeroCalorie ? 0 : Math.max(0, Math.round(baseCal + currentOilDeltaCals));
+
+  const currentCal = isZeroCalorie ? 0 : Math.round(adjustedBaseCal * multiplier);
+  const currentP = isZeroCalorie ? 0 : Math.round(baseP * multiplier);
+  const currentC = isZeroCalorie ? 0 : Math.round(baseC * multiplier);
+  const currentF = isZeroCalorie ? 0 : Math.round(adjustedBaseFat * multiplier);
+  const currentNa = isZeroCalorie ? 0 : Math.round(baseNa * multiplier);
+  const currentSugar = isZeroCalorie ? 0 : Math.round(baseSugar * multiplier);
 
   const setPresetPortion = (type: 'small' | 'regular' | 'large', mult: number) => {
     setPortionLabel(type);
@@ -411,14 +413,15 @@ export const AIResultModal: React.FC<AIResultModalProps> = ({
           </div>
 
           {/* AI OILINESS & GREASE SHEEN SCANNER */}
-          <div className="bg-white rounded-2xl p-4 border border-stone-200 shadow-soft space-y-3 animate-fade-slide-up delay-120">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-1.5">
-                <Droplets className="w-4 h-4 text-amber-600" />
-                <span className="text-xs font-bold text-slate-800 uppercase tracking-wider">
-                  Oiliness & Grease Sheen
-                </span>
-              </div>
+          {!isZeroCalorie && (
+            <div className="bg-white rounded-2xl p-4 border border-stone-200 shadow-soft space-y-3 animate-fade-slide-up delay-120">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-1.5">
+                  <Droplets className="w-4 h-4 text-amber-600" />
+                  <span className="text-xs font-bold text-slate-800 uppercase tracking-wider">
+                    Oiliness & Grease Sheen
+                  </span>
+                </div>
               <span className={`text-[11px] font-bold px-2 py-0.5 rounded-md border ${
                 selectedOilLevel === 'light'
                   ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
@@ -497,6 +500,7 @@ export const AIResultModal: React.FC<AIResultModalProps> = ({
               </div>
             )}
           </div>
+          )}
 
           {/* PORTION ADJUSTER (Core Requirement) */}
           <div className="bg-white rounded-2xl p-4 border border-stone-200 shadow-soft space-y-3 animate-fade-slide-up delay-150">
