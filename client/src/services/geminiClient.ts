@@ -202,21 +202,10 @@ export function getEnvGeminiKey(): string | null {
   }
 }
 
-// Built-in default key (safely obfuscated to avoid Git secret scanner false alarms)
-const DEFAULT_KEY_SEGMENTS = [
-  'QVEuQWI4Uk42SVZibmRw',
-  'ZVNhYnU3Z1ZXSXo1YkhQ',
-  'REljeWJZRjBLVGdTNmNf',
-  'WmhGcDRJclE='
-];
-
 function getBuiltInKey(): string {
-  try {
-    return atob(DEFAULT_KEY_SEGMENTS.join(''));
-  } catch {
-    return '';
-  }
+  return '';
 }
+
 
 /**
  * Returns the best available Gemini API key.

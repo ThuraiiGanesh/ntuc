@@ -75,10 +75,10 @@ export const ManualFoodSearchModal: React.FC<ManualFoodSearchModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-md flex items-center justify-center p-3 animate-fade-in">
-      <div className="bg-[#FAF7F2] w-full max-w-md rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] border border-stone-200 animate-scale-in">
+      <div className="bg-[#FFF8FA] w-full max-w-md rounded-3xl shadow-float overflow-hidden flex flex-col max-h-[90vh] border border-pink-100 animate-scale-in">
 
         {/* ── Header ── */}
-        <div className="bg-white px-4 pt-4 pb-3 border-b border-stone-200">
+        <div className="bg-white/95 backdrop-blur-md px-4 pt-4 pb-3 border-b border-pink-100/80">
           <div className="flex items-start justify-between mb-3">
             <div>
               <h3 className="text-sm font-black text-slate-900 leading-tight">Hawker Food Catalog</h3>
@@ -86,7 +86,7 @@ export const ManualFoodSearchModal: React.FC<ManualFoodSearchModalProps> = ({
             </div>
             <button
               onClick={onClose}
-              className="w-8 h-8 rounded-full bg-stone-100 flex items-center justify-center text-stone-500 hover:bg-stone-200 hover:rotate-90 transition-all duration-200 shrink-0 mt-0.5"
+              className="w-8 h-8 rounded-full bg-pink-50 flex items-center justify-center text-stone-400 hover:text-rose-600 hover:bg-pink-100 hover:rotate-90 transition-all duration-200 shrink-0 mt-0.5"
             >
               <X className="w-4 h-4" />
             </button>
@@ -101,12 +101,12 @@ export const ManualFoodSearchModal: React.FC<ManualFoodSearchModalProps> = ({
               placeholder="Chicken rice, laksa, BCM, teh tarik..."
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-9 py-2.5 rounded-xl bg-stone-100 border border-stone-200 text-xs font-semibold text-slate-800 placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-[#D9381E]/30 focus:border-[#D9381E] focus:bg-white transition-all"
+              className="w-full pl-9 pr-9 py-2.5 rounded-xl bg-pink-50/50 border border-pink-100/80 text-xs font-semibold text-slate-800 placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-rose-400/30 focus:border-rose-400 focus:bg-white transition-all"
             />
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery('')}
-                className="absolute right-3 top-2.5 text-stone-400 hover:text-stone-700 transition-colors"
+                className="absolute right-3 top-2.5 text-stone-400 hover:text-rose-600 transition-colors"
               >
                 <X className="w-3.5 h-3.5" />
               </button>
@@ -115,15 +115,15 @@ export const ManualFoodSearchModal: React.FC<ManualFoodSearchModalProps> = ({
         </div>
 
         {/* ── Category Tabs ── */}
-        <div className="flex space-x-1.5 overflow-x-auto no-scrollbar py-2.5 px-3 bg-white border-b border-stone-100">
+        <div className="flex space-x-1.5 overflow-x-auto no-scrollbar py-2.5 px-3 bg-white/90 border-b border-pink-100/60">
           {categories.map(cat => (
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
               className={`flex items-center space-x-1 px-3 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all ${
                 selectedCategory === cat
-                  ? 'bg-gradient-to-r from-[#D9381E] to-[#EA580C] text-white shadow-md'
-                  : 'bg-stone-100 text-stone-600 hover:bg-stone-200'
+                  ? 'bg-gradient-to-r from-rose-500 to-pink-500 text-white shadow-md shadow-pink-200'
+                  : 'bg-stone-100/80 text-stone-600 hover:bg-pink-50 hover:text-rose-600'
               }`}
             >
               <span>{CATEGORY_EMOJIS[cat]}</span>
@@ -133,7 +133,7 @@ export const ManualFoodSearchModal: React.FC<ManualFoodSearchModalProps> = ({
         </div>
 
         {/* ── Dietary Filters ── */}
-        <div className="flex items-center space-x-1.5 text-[11px] overflow-x-auto no-scrollbar px-3 py-2 bg-white/50 border-b border-stone-100">
+        <div className="flex items-center space-x-1.5 text-[11px] overflow-x-auto no-scrollbar px-3 py-2 bg-white/60 border-b border-pink-100/60">
           {[
             { id: 'all',               label: '🍽️ All Diets' },
             { id: 'healthier_choice',  label: '💚 Healthier Choice' },
@@ -147,8 +147,8 @@ export const ManualFoodSearchModal: React.FC<ManualFoodSearchModalProps> = ({
               onClick={() => setSelectedDiet(d.id)}
               className={`px-2.5 py-1 rounded-lg border font-semibold whitespace-nowrap transition-all ${
                 selectedDiet === d.id
-                  ? 'bg-slate-900 text-white border-slate-900 shadow-sm'
-                  : 'bg-white text-stone-500 border-stone-200 hover:border-stone-300 hover:text-stone-700'
+                  ? 'bg-rose-500 text-white border-rose-500 shadow-sm shadow-pink-200'
+                  : 'bg-white text-stone-500 border-stone-200 hover:border-pink-200 hover:text-rose-600'
               }`}
             >
               {d.label}
@@ -170,7 +170,7 @@ export const ManualFoodSearchModal: React.FC<ManualFoodSearchModalProps> = ({
               <p className="text-sm font-extrabold text-slate-700">No matching dishes found</p>
               <p className="text-[11px] text-stone-400 leading-relaxed">
                 Try a different local name or category.<br />
-                <span className="text-[#D9381E] font-semibold">Tip:</span> Try "BCM", "carrot cake", or "chicken"
+                <span className="text-rose-600 font-semibold">Tip:</span> Try "BCM", "carrot cake", or "chicken"
               </p>
             </div>
           ) : (
@@ -191,12 +191,12 @@ export const ManualFoodSearchModal: React.FC<ManualFoodSearchModalProps> = ({
                     key={dish.id}
                     type="button"
                     onClick={() => onSelectDish(dish)}
-                    className="w-full bg-white p-3.5 rounded-2xl border border-stone-200 hover:border-[#D9381E] text-left flex items-center justify-between transition-all duration-200 hover:shadow-md group card-hover animate-fade-slide-up press-anim"
+                    className="w-full bg-white p-3.5 rounded-2xl border border-pink-100/80 hover:border-rose-400 text-left flex items-center justify-between transition-all duration-200 hover:shadow-glow-pink group card-hover animate-fade-slide-up press-anim"
                     style={{ animationDelay: `${idx * 40}ms` }}
                   >
                     <div className="flex-1 pr-3 min-w-0">
                       <div className="flex items-center space-x-1.5 flex-wrap gap-y-1">
-                        <span className="text-xs font-extrabold text-slate-900 group-hover:text-[#D9381E] transition-colors truncate">
+                        <span className="text-xs font-extrabold text-slate-900 group-hover:text-rose-600 transition-colors truncate">
                           {dish.name_en}
                         </span>
                         {badge && (
@@ -224,7 +224,7 @@ export const ManualFoodSearchModal: React.FC<ManualFoodSearchModalProps> = ({
                       </div>
                     </div>
 
-                    <div className="w-8 h-8 rounded-full bg-stone-50 group-hover:bg-red-50 flex items-center justify-center text-stone-300 group-hover:text-[#D9381E] transition-all duration-200 shrink-0">
+                    <div className="w-8 h-8 rounded-full bg-pink-50/50 group-hover:bg-pink-100 flex items-center justify-center text-stone-300 group-hover:text-rose-600 transition-all duration-200 shrink-0">
                       <ChevronRight className="w-4 h-4" />
                     </div>
                   </button>

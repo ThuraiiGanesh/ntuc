@@ -187,14 +187,14 @@ export const AIResultModal: React.FC<AIResultModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4 animate-fade-in">
-      <div className="bg-[#FAF7F2] w-full max-w-md rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh] border border-stone-200 animate-slide-up">
+      <div className="bg-[#FFF8FA] w-full max-w-md rounded-t-3xl sm:rounded-3xl shadow-float overflow-hidden flex flex-col max-h-[92vh] border border-pink-100 animate-slide-up">
         
         {/* Header Bar */}
-        <div className="bg-white border-b border-stone-200 px-5 py-3.5 flex items-center justify-between">
+        <div className="bg-white/90 backdrop-blur-md border-b border-pink-100/80 px-5 py-3.5 flex items-center justify-between">
           <div className="flex items-center space-x-2.5">
             <div className="relative w-6 h-6 flex items-center justify-center">
-              <span className="absolute inset-0 rounded-full bg-emerald-400/30 animate-ping" />
-              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 relative z-10" />
+              <span className="absolute inset-0 rounded-full bg-rose-400/30 animate-ping" />
+              <span className="w-2.5 h-2.5 rounded-full bg-rose-500 relative z-10" />
             </div>
             <div>
               <h3 className="font-black text-slate-900 text-sm leading-none">AI Food Identification</h3>
@@ -203,7 +203,7 @@ export const AIResultModal: React.FC<AIResultModalProps> = ({
           </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 rounded-full bg-stone-100 flex items-center justify-center text-stone-500 hover:bg-stone-200 hover:rotate-90 transition-all duration-200"
+            className="w-8 h-8 rounded-full bg-pink-50 flex items-center justify-center text-stone-400 hover:text-rose-600 hover:bg-pink-100 hover:rotate-90 transition-all duration-200"
           >
             <X className="w-4 h-4" />
           </button>
@@ -214,7 +214,7 @@ export const AIResultModal: React.FC<AIResultModalProps> = ({
           
           {/* Food photo hero */}
           {photoUrl && (
-            <div className="relative h-36 rounded-2xl overflow-hidden border border-stone-200 animate-fade-slide-up">
+            <div className="relative h-36 rounded-2xl overflow-hidden border border-pink-100/80 shadow-soft animate-fade-slide-up">
               <img src={photoUrl} alt="Food" className="w-full h-full object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
               <div className="absolute bottom-2.5 left-3 text-white">
@@ -231,10 +231,10 @@ export const AIResultModal: React.FC<AIResultModalProps> = ({
           )}
 
           {/* Dish Identification Card */}
-          <div className="bg-white rounded-2xl p-4 border border-stone-200 shadow-soft animate-fade-slide-up delay-100">
+          <div className="bg-white rounded-2xl p-4 border border-pink-100/70 shadow-soft animate-fade-slide-up delay-100">
             <div className="flex items-start justify-between">
               <div>
-                <span className="bg-orange-100 text-[#D9381E] text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+                <span className="bg-pink-50 text-rose-600 border border-pink-100 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
                   {category} Hawker
                 </span>
                 <h2 className="text-lg font-extrabold text-slate-900 mt-1">
@@ -247,27 +247,10 @@ export const AIResultModal: React.FC<AIResultModalProps> = ({
                 )}
               </div>
 
-              {/* Confidence badge & Model Source */}
+              {/* Confidence badge */}
               <div className="text-right flex flex-col items-end gap-1">
                 <span className="inline-flex items-center space-x-1 bg-emerald-50 border border-emerald-200 text-emerald-700 text-[11px] font-bold px-2 py-0.5 rounded-lg">
                   <span>{formatConfidence(result.confidence)}</span>
-                </span>
-                {result.source === 'google_gemini' ? (
-                  <span className="inline-flex items-center space-x-1 bg-blue-50 border border-blue-200 text-blue-700 text-[10px] font-extrabold px-2 py-0.5 rounded-md">
-                    <span className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-ping" />
-                    <span>Google Gemini Vision</span>
-                  </span>
-                ) : result.source === 'claude_api' ? (
-                  <span className="inline-flex items-center space-x-1 bg-purple-50 border border-purple-200 text-purple-700 text-[10px] font-extrabold px-2 py-0.5 rounded-md">
-                    <span>Claude Vision</span>
-                  </span>
-                ) : (
-                  <span className="inline-flex items-center space-x-1 bg-stone-100 border border-stone-200 text-stone-600 text-[10px] font-bold px-2 py-0.5 rounded-md">
-                    <span>Hawker Classifier</span>
-                  </span>
-                )}
-                <span className="inline-flex items-center space-x-1 bg-amber-50 border border-amber-200 text-amber-800 text-[9px] font-bold px-1.5 py-0.5 rounded-md">
-                  <span>🧠 Model Training Active</span>
                 </span>
               </div>
             </div>
@@ -295,7 +278,7 @@ export const AIResultModal: React.FC<AIResultModalProps> = ({
                     )}
                     <button
                       onClick={onOpenManualSearch}
-                      className="bg-[#D9381E] text-white px-2.5 py-1.5 rounded-xl text-[11px] font-bold hover:bg-[#b82e18] transition-colors shadow-sm"
+                      className="bg-gradient-to-r from-rose-500 to-pink-500 text-white px-2.5 py-1.5 rounded-xl text-[11px] font-bold hover:from-rose-600 hover:to-pink-600 transition-colors shadow-sm"
                     >
                       Search & Select Dish
                     </button>
@@ -306,22 +289,22 @@ export const AIResultModal: React.FC<AIResultModalProps> = ({
 
             {/* AI Visual Note */}
             {result.ai_notes && (
-              <p className="text-[11px] text-stone-500 italic mt-2.5 bg-stone-50 p-2 rounded-xl border border-stone-100">
+              <p className="text-[11px] text-stone-500 italic mt-2.5 bg-pink-50/50 p-2 rounded-xl border border-pink-100/60">
                 "{result.ai_notes}"
               </p>
             )}
 
             {/* Visual Ingredient Breakdown (Google Gemini Multimodal Analysis) */}
             {currentIngredients && currentIngredients.length > 0 && (
-              <div className="mt-3.5 pt-3 border-t border-stone-200/80">
+              <div className="mt-3.5 pt-3 border-t border-pink-100/80">
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center space-x-1.5">
-                    <Sparkles className="w-3.5 h-3.5 text-blue-600" />
+                    <Sparkles className="w-3.5 h-3.5 text-pink-500" />
                     <span className="text-xs font-black text-slate-800 uppercase tracking-wider">
                       Visual Ingredient Breakdown
                     </span>
                   </div>
-                  <span className="text-[10px] font-extrabold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-100">
+                  <span className="text-[10px] font-extrabold text-rose-700 bg-pink-50 px-2 py-0.5 rounded-md border border-pink-100">
                     {Math.round(
                       currentIngredients.reduce((sum, item) => sum + (item.estimated_weight_g || 0), 0) * multiplier
                     )}g total
@@ -342,11 +325,11 @@ export const AIResultModal: React.FC<AIResultModalProps> = ({
                     return (
                       <div
                         key={idx}
-                        className="bg-stone-50 hover:bg-white p-2 rounded-xl border border-stone-200/70 transition-colors text-xs flex items-center justify-between gap-2"
+                        className="bg-stone-50/70 hover:bg-pink-50/40 p-2 rounded-xl border border-stone-200/60 hover:border-pink-200 transition-colors text-xs flex items-center justify-between gap-2"
                       >
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center space-x-1.5">
-                            <span className="w-1.5 h-1.5 rounded-full bg-[#D9381E] shrink-0" />
+                            <span className="w-1.5 h-1.5 rounded-full bg-rose-500 shrink-0" />
                             <span className="font-bold text-slate-800 truncate text-[11px]">
                               {ing.ingredient}
                             </span>
@@ -370,7 +353,7 @@ export const AIResultModal: React.FC<AIResultModalProps> = ({
                           <div className="font-extrabold text-slate-900 text-xs">
                             {scaledWeight}g
                           </div>
-                          <div className="text-[10px] font-semibold text-amber-700">
+                          <div className="text-[10px] font-semibold text-rose-600">
                             {scaledCals} kcal
                           </div>
                         </div>
@@ -383,7 +366,7 @@ export const AIResultModal: React.FC<AIResultModalProps> = ({
 
             {/* Alternative Candidates */}
             {result.alternative_dishes_if_uncertain?.length > 0 && (
-              <div className="mt-3 pt-3 border-t border-stone-100">
+              <div className="mt-3 pt-3 border-t border-pink-100">
                 <span className="text-[11px] font-bold text-stone-500 block mb-1.5">
                   Not quite right? Tap a candidate match:
                 </span>
@@ -394,8 +377,8 @@ export const AIResultModal: React.FC<AIResultModalProps> = ({
                       onClick={() => handleSelectAlternative(alt)}
                       className={`text-xs px-2.5 py-1 rounded-xl border font-medium transition-all ${
                         selectedDishName === alt.dish_name
-                          ? 'bg-[#D9381E] text-white border-[#D9381E] font-bold'
-                          : 'bg-stone-50 text-stone-700 border-stone-200 hover:bg-stone-100'
+                          ? 'bg-rose-500 text-white border-rose-500 font-bold shadow-sm'
+                          : 'bg-white text-stone-700 border-pink-100 hover:bg-pink-50'
                       }`}
                     >
                       {alt.dish_name}
@@ -403,7 +386,7 @@ export const AIResultModal: React.FC<AIResultModalProps> = ({
                   ))}
                   <button
                     onClick={onOpenManualSearch}
-                    className="text-xs px-2.5 py-1 rounded-xl border border-dashed border-stone-300 text-stone-500 hover:text-stone-800"
+                    className="text-xs px-2.5 py-1 rounded-xl border border-dashed border-pink-200 text-stone-500 hover:text-rose-600 hover:border-rose-300 transition-colors"
                   >
                     Search full catalog...
                   </button>
@@ -503,15 +486,15 @@ export const AIResultModal: React.FC<AIResultModalProps> = ({
           )}
 
           {/* PORTION ADJUSTER (Core Requirement) */}
-          <div className="bg-white rounded-2xl p-4 border border-stone-200 shadow-soft space-y-3 animate-fade-slide-up delay-150">
+          <div className="bg-white rounded-2xl p-4 border border-pink-100/80 shadow-soft space-y-3 animate-fade-slide-up delay-150">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-1.5">
-                <Sliders className="w-4 h-4 text-[#D9381E]" />
+                <Sliders className="w-4 h-4 text-rose-500" />
                 <span className="text-xs font-bold text-slate-800 uppercase tracking-wider">
                   Portion Size Adjuster
                 </span>
               </div>
-              <span className="text-xs font-bold text-[#D9381E] bg-red-50 px-2 py-0.5 rounded-md">
+              <span className="text-xs font-bold text-rose-600 bg-pink-50 border border-pink-100 px-2 py-0.5 rounded-md">
                 {Math.round(multiplier * 100)}% ({portionLabel})
               </span>
             </div>
@@ -529,8 +512,8 @@ export const AIResultModal: React.FC<AIResultModalProps> = ({
                   onClick={() => setPresetPortion(p.label.toLowerCase() as any, p.mult)}
                   className={`py-2 px-1 rounded-xl border text-center transition-all ${
                     multiplier === p.mult
-                      ? 'bg-red-50 border-[#D9381E] text-slate-900 ring-1 ring-[#D9381E] font-bold'
-                      : 'bg-stone-50 border-stone-200 text-stone-600 hover:bg-stone-100'
+                      ? 'bg-pink-50 border-rose-400 text-rose-950 ring-1 ring-rose-400 font-bold shadow-sm'
+                      : 'bg-stone-50/60 border-stone-200/80 text-stone-600 hover:bg-pink-50/30'
                   }`}
                 >
                   <div className="text-xs font-bold">{p.label}</div>
@@ -548,7 +531,7 @@ export const AIResultModal: React.FC<AIResultModalProps> = ({
                 step="0.05"
                 value={multiplier}
                 onChange={e => handleSliderChange(parseFloat(e.target.value))}
-                className="w-full h-2 bg-stone-200 rounded-lg appearance-none cursor-pointer accent-[#D9381E]"
+                className="w-full h-2 bg-pink-100/60 rounded-lg appearance-none cursor-pointer accent-rose-500"
               />
               <div className="flex justify-between text-[10px] text-stone-400 font-medium px-1 mt-1">
                 <span>50% (Half)</span>
@@ -558,11 +541,11 @@ export const AIResultModal: React.FC<AIResultModalProps> = ({
             </div>
 
             {/* Live Recalculated Nutrition Grid */}
-            <div className="grid grid-cols-3 gap-2 pt-2 border-t border-stone-100">
-              <div className="bg-amber-50/70 p-2 rounded-xl text-center border border-amber-200/50">
-                <div className="text-[10px] font-bold text-amber-900 uppercase">Calories</div>
-                <div className="text-lg font-extrabold text-[#D9381E]">{currentCal}</div>
-                <div className="text-[10px] text-stone-500">kcal</div>
+            <div className="grid grid-cols-3 gap-2 pt-2 border-t border-pink-100/60">
+              <div className="bg-pink-50/80 p-2 rounded-xl text-center border border-pink-200/60">
+                <div className="text-[10px] font-bold text-rose-900 uppercase">Calories</div>
+                <div className="text-lg font-extrabold text-rose-600">{currentCal}</div>
+                <div className="text-[10px] text-rose-400">kcal</div>
               </div>
 
               <div className="bg-blue-50/70 p-2 rounded-xl text-center border border-blue-200/50">
@@ -579,7 +562,7 @@ export const AIResultModal: React.FC<AIResultModalProps> = ({
             </div>
 
             {/* Sodium & Sugar row */}
-            <div className="flex items-center justify-between text-xs bg-stone-50 p-2.5 rounded-xl text-stone-600">
+            <div className="flex items-center justify-between text-xs bg-stone-50/80 p-2.5 rounded-xl text-stone-600 border border-stone-200/50">
               <div>
                 <span>Sodium: </span>
                 <strong className={currentNa > 1200 ? 'text-amber-600 font-bold' : 'text-slate-800'}>
@@ -597,7 +580,7 @@ export const AIResultModal: React.FC<AIResultModalProps> = ({
 
           {/* Healthier Alternative Card */}
           {result.healthier_alternative && (
-            <div className="bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200 p-3.5 rounded-2xl animate-fade-slide-up delay-200">
+            <div className="bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200/80 p-3.5 rounded-2xl shadow-soft animate-fade-slide-up delay-200">
               <div className="flex items-center space-x-1.5 text-emerald-800 text-xs font-bold mb-1">
                 <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
                 <span>Healthier Hawker Order Tip:</span>
@@ -609,7 +592,7 @@ export const AIResultModal: React.FC<AIResultModalProps> = ({
           )}
 
           {/* Meal Slot Selector */}
-          <div className="bg-white rounded-2xl p-3.5 border border-stone-200 space-y-2">
+          <div className="bg-white rounded-2xl p-3.5 border border-pink-100/70 shadow-soft space-y-2">
             <label className="text-xs font-bold text-slate-800 block">Log to Meal Time:</label>
             <div className="grid grid-cols-4 gap-1.5">
               {(['breakfast', 'lunch', 'dinner', 'snack'] as const).map(slot => (
@@ -619,8 +602,8 @@ export const AIResultModal: React.FC<AIResultModalProps> = ({
                   onClick={() => setMealType(slot)}
                   className={`py-1.5 text-xs font-bold capitalize rounded-xl transition-all ${
                     mealType === slot
-                      ? 'bg-slate-900 text-white shadow-sm'
-                      : 'bg-stone-100 text-stone-600 hover:bg-stone-200'
+                      ? 'bg-gradient-to-r from-rose-500 to-pink-500 text-white shadow-sm shadow-pink-200'
+                      : 'bg-stone-100/80 text-stone-600 hover:bg-pink-50 hover:text-rose-600'
                   }`}
                 >
                   {slot}
@@ -631,11 +614,11 @@ export const AIResultModal: React.FC<AIResultModalProps> = ({
         </div>
 
         {/* Action Button */}
-        <div className="p-4 bg-white/80 backdrop-blur-sm border-t border-stone-200">
+        <div className="p-4 bg-white/90 backdrop-blur-sm border-t border-pink-100/80">
           <button
             onClick={handleConfirmLog}
             disabled={saving}
-            className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-[#D9381E] to-[#EA580C] hover:from-[#c0321a] hover:to-[#d9500a] active:scale-[0.98] text-white font-black text-sm flex items-center justify-center space-x-2 shadow-lg shadow-red-500/30 transition-all duration-200 press-anim"
+            className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-rose-500 via-pink-500 to-rose-500 hover:from-rose-600 hover:to-pink-600 active:scale-[0.98] text-white font-black text-sm flex items-center justify-center space-x-2 shadow-lg shadow-pink-500/25 transition-all duration-200 press-anim"
           >
             {saving ? (
               <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">

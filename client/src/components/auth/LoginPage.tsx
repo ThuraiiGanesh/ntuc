@@ -158,15 +158,15 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAF7F2] flex items-center justify-center p-4">
-      <div className="w-full max-w-sm bg-white rounded-3xl border border-stone-200 shadow-2xl p-6 space-y-5 animate-scale-in relative overflow-hidden">
+    <div className="min-h-screen bg-[#FDF2F5] flex items-center justify-center p-4">
+      <div className="w-full max-w-sm bg-white rounded-3xl border border-pink-100 shadow-float p-6 space-y-5 animate-scale-in relative overflow-hidden">
         
         {/* Subtle decorative gradient top bar */}
-        <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-[#D9381E] via-[#EA580C] to-amber-400" />
+        <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-rose-500 via-pink-400 to-rose-300" />
 
         {/* Brand Header */}
         <div className="text-center pt-2 space-y-1">
-          <div className="w-14 h-14 mx-auto rounded-2xl bg-gradient-to-br from-[#D9381E] to-[#EA580C] flex items-center justify-center text-white shadow-float mb-2 animate-float">
+          <div className="w-14 h-14 mx-auto rounded-2xl bg-gradient-to-br from-rose-500 to-pink-500 flex items-center justify-center text-white shadow-glow-pink mb-2 animate-float">
             <Utensils className="w-7 h-7" />
           </div>
           <h1 className="text-xl font-black text-slate-900 tracking-tight">
@@ -178,12 +178,12 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
         </div>
 
         {/* Mode Toggle Tabs */}
-        <div className="flex bg-stone-100 p-1 rounded-2xl border border-stone-200">
+        <div className="flex bg-pink-50/70 p-1 rounded-2xl border border-pink-100">
           <button
             type="button"
             onClick={() => { setIsSignUp(false); setError(null); }}
             className={`flex-1 py-2 rounded-xl text-xs font-black transition-all ${
-              !isSignUp ? 'bg-white text-slate-900 shadow-sm' : 'text-stone-500 hover:text-slate-800'
+              !isSignUp ? 'bg-white text-rose-600 shadow-sm' : 'text-stone-500 hover:text-slate-800'
             }`}
           >
             Sign In
@@ -192,7 +192,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
             type="button"
             onClick={() => { setIsSignUp(true); setError(null); }}
             className={`flex-1 py-2 rounded-xl text-xs font-black transition-all ${
-              isSignUp ? 'bg-white text-slate-900 shadow-sm' : 'text-stone-500 hover:text-slate-800'
+              isSignUp ? 'bg-white text-rose-600 shadow-sm' : 'text-stone-500 hover:text-slate-800'
             }`}
           >
             Create Account
@@ -219,7 +219,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                   placeholder="e.g. Tan Ah Hock"
                   value={name}
                   onChange={e => setName(e.target.value)}
-                  className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-stone-200 text-xs font-semibold text-slate-900 placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-[#D9381E]/20 focus:border-[#D9381E] transition-all"
+                  className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-pink-100 text-xs font-semibold text-slate-900 placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-rose-400/20 focus:border-rose-400 transition-all"
                 />
               </div>
             </div>
@@ -235,7 +235,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                 placeholder="you@domain.com"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
-                className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-stone-200 text-xs font-semibold text-slate-900 placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-[#D9381E]/20 focus:border-[#D9381E] transition-all"
+                className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-pink-100 text-xs font-semibold text-slate-900 placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-rose-400/20 focus:border-rose-400 transition-all"
               />
             </div>
           </div>
@@ -250,7 +250,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                 placeholder="At least 6 characters"
                 value={password}
                 onChange={e => setPassword(e.target.value)}
-                className="w-full pl-9 pr-10 py-2.5 rounded-xl border border-stone-200 text-xs font-semibold text-slate-900 placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-[#D9381E]/20 focus:border-[#D9381E] transition-all"
+                className="w-full pl-9 pr-10 py-2.5 rounded-xl border border-pink-100 text-xs font-semibold text-slate-900 placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-rose-400/20 focus:border-rose-400 transition-all"
               />
               <button
                 type="button"
@@ -266,7 +266,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3.5 bg-gradient-to-r from-[#D9381E] to-[#EA580C] hover:opacity-95 active:scale-[0.98] text-white rounded-2xl font-black text-xs flex items-center justify-center space-x-2 shadow-float transition-all press-anim mt-2"
+            className="w-full py-3.5 bg-gradient-to-r from-rose-500 via-pink-500 to-rose-500 hover:from-rose-600 hover:to-pink-600 active:scale-[0.98] text-white rounded-2xl font-black text-xs flex items-center justify-center space-x-2 shadow-lg shadow-pink-500/25 transition-all press-anim mt-2"
           >
             {loading ? (
               <svg className="w-4 h-4 animate-spin text-white" fill="none" viewBox="0 0 24 24">
@@ -284,9 +284,9 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
 
         {/* Divider */}
         <div className="relative flex py-1 items-center">
-          <div className="flex-grow border-t border-stone-200" />
+          <div className="flex-grow border-t border-pink-100" />
           <span className="flex-shrink mx-3 text-[10px] uppercase font-bold text-stone-400">or preview with</span>
-          <div className="flex-grow border-t border-stone-200" />
+          <div className="flex-grow border-t border-pink-100" />
         </div>
 
         {/* One-Click Demo Button */}
@@ -294,21 +294,21 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
           type="button"
           onClick={handleQuickDemo}
           disabled={loading}
-          className="w-full py-2.5 bg-stone-50 hover:bg-stone-100 active:scale-[0.98] text-stone-700 rounded-2xl font-bold text-xs flex items-center justify-center space-x-2 border border-stone-200 transition-all press-anim"
+          className="w-full py-2.5 bg-pink-50/50 hover:bg-pink-100/50 active:scale-[0.98] text-rose-700 rounded-2xl font-bold text-xs flex items-center justify-center space-x-2 border border-pink-100/80 transition-all press-anim"
         >
-          <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+          <Sparkles className="w-3.5 h-3.5 text-pink-500" />
           <span>One-Click Singapore Demo Account</span>
         </button>
 
         {/* Server Connection Config for Mobile Phone */}
-        <div className="pt-2 border-t border-stone-100">
+        <div className="pt-2 border-t border-pink-100/60">
           <button
             type="button"
             onClick={() => setShowServerConfig(!showServerConfig)}
-            className="w-full flex items-center justify-between text-[11px] font-bold text-stone-500 hover:text-stone-800 transition-colors py-1"
+            className="w-full flex items-center justify-between text-[11px] font-bold text-stone-500 hover:text-rose-600 transition-colors py-1"
           >
             <div className="flex items-center space-x-1.5">
-              <Wifi className="w-3.5 h-3.5 text-[#D9381E]" />
+              <Wifi className="w-3.5 h-3.5 text-rose-500" />
               <span>Mobile Server Connection</span>
             </div>
             <span className="text-[10px] text-stone-400 font-mono">
@@ -317,7 +317,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
           </button>
 
           {showServerConfig && (
-            <div className="mt-2.5 p-3 rounded-2xl bg-stone-50 border border-stone-200 space-y-2.5 animate-fade-slide-up">
+            <div className="mt-2.5 p-3 rounded-2xl bg-pink-50/40 border border-pink-100 space-y-2.5 animate-fade-slide-up">
               <div className="flex items-center justify-between text-[10px]">
                 <span className="font-bold text-stone-600">Backend API URL:</span>
                 {pingStatus === 'testing' && <span className="text-amber-600 font-bold flex items-center space-x-1"><RefreshCw className="w-2.5 h-2.5 animate-spin" /><span>Pinging...</span></span>}
@@ -330,35 +330,35 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                 value={serverUrl}
                 onChange={e => setServerUrl(e.target.value)}
                 placeholder="http://10.6.12.150:5000/api"
-                className="w-full px-2.5 py-1.5 rounded-xl border border-stone-300 text-[11px] font-mono text-slate-800 bg-white focus:outline-none focus:border-[#D9381E]"
+                className="w-full px-2.5 py-1.5 rounded-xl border border-pink-200 text-[11px] font-mono text-slate-800 bg-white focus:outline-none focus:border-rose-400 focus:ring-2 focus:ring-rose-400/20"
               />
 
               <div className="flex space-x-2">
                 <button
                   type="button"
                   onClick={handleTestPing}
-                  className="flex-1 py-1.5 rounded-xl bg-white border border-stone-300 text-stone-700 text-[11px] font-bold hover:bg-stone-100 transition-colors"
+                  className="flex-1 py-1.5 rounded-xl bg-white border border-pink-200 text-stone-700 text-[11px] font-bold hover:bg-pink-50 hover:text-rose-600 transition-colors"
                 >
                   Test Connection
                 </button>
                 <button
                   type="button"
                   onClick={handleSaveServerUrl}
-                  className="px-3 py-1.5 rounded-xl bg-[#D9381E] text-white text-[11px] font-bold hover:opacity-95 transition-opacity"
+                  className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-rose-500 to-pink-500 text-white text-[11px] font-bold hover:opacity-95 transition-opacity shadow-sm"
                 >
                   Save
                 </button>
               </div>
 
               <p className="text-[10px] text-stone-500 leading-tight">
-                💡 Ensure your phone is connected to the same Wi-Fi as your laptop (<code className="font-mono text-stone-700 font-bold">10.6.12.150</code>).
+                💡 Ensure your phone is connected to the same Wi-Fi as your laptop (<code className="font-mono text-rose-700 font-bold">10.6.12.150</code>).
               </p>
             </div>
           )}
         </div>
 
         {/* Footer Feature Badges */}
-        <div className="pt-2 border-t border-stone-100 flex items-center justify-center space-x-4 text-[10px] text-stone-400 font-semibold">
+        <div className="pt-2 border-t border-pink-100/60 flex items-center justify-center space-x-4 text-[10px] text-stone-400 font-semibold">
           <span className="flex items-center space-x-1">
             <ShieldCheck className="w-3 h-3 text-emerald-500" />
             <span>SQLite Database</span>
