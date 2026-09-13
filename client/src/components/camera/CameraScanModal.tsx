@@ -3,6 +3,7 @@ import { Camera, Upload, X, Sparkles, Zap, Image as ImageIcon, Scan } from 'luci
 import { SAMPLE_HAWKER_DISHES, SampleDish } from '../../data/sampleDishes';
 import { VisionResult } from '../../types';
 import { api } from '../../services/api';
+import { identifyFoodWithGemini, getBestGeminiKey } from '../../services/geminiClient';
 
 interface CameraScanModalProps {
   isOpen: boolean;
@@ -146,10 +147,36 @@ export const CameraScanModal: React.FC<CameraScanModalProps> = ({
     );
 
     try {
-      const result = await api.identifyFood({
-        imageBase64: imgData.startsWith('data:') ? imgData : undefined,
-        sampleDishId: sampleId
-      });
+      let result: VisionResult;
+
+      // If scanning a sample dish, use server/fallback catalog path
+      if (sampleId) {
+        result = await api.identifyFood({ sampleDishId: sampleId });
+      } else {
+        // For real camera/upload photos: try client-side Gemini first (fastest, most accurate)
+        const geminiKey = getBestGeminiKey();
+        if (geminiKey && imgData.startsWith('data:')) {
+          try {
+            setScanStatus('Sending to Google Gemini Vision AI...');
+            const mimeType = imgData.startsWith('data:image/png') ? 'image/png' : 'image/jpeg';
+            result = await identifyFoodWithGemini(imgData, mimeType, geminiKey);
+          } catch (geminiErr) {
+            console.warn('Client Gemini failed, falling back to server:', geminiErr);
+            // Fallback: try server-side identification
+            const serverResult = await api.identifyFood({
+              imageBase64: imgData,
+              customApiKey: geminiKey
+            });
+            result = serverResult;
+          }
+        } else {
+          // No key available: use server (may use env GEMINI_API_KEY) or smart fallback
+          result = await api.identifyFood({
+            imageBase64: imgData.startsWith('data:') ? imgData : undefined
+          });
+        }
+      }
+
       timers.forEach(clearTimeout);
       setAnalyzing(false);
       onIdentified(result, imgData);

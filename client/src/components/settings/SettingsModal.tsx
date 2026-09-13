@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { X, Check, Save, HeartPulse, User, LogOut, Mail, Sparkles, BrainCircuit, Globe } from 'lucide-react';
+import { X, Check, Save, HeartPulse, User, LogOut, Mail, Sparkles, BrainCircuit, Globe, KeyRound, Loader2 } from 'lucide-react';
 import { UserProfile } from '../../types';
 import { api } from '../../services/api';
+import { identifyFoodWithGemini } from '../../services/geminiClient';
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -34,6 +35,33 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   const [apiUrl, setApiUrl] = useState(() => (typeof window !== 'undefined' ? localStorage.getItem('hawker_api_url') || '' : ''));
   const [geminiKey, setGeminiKey] = useState(() => (typeof window !== 'undefined' ? localStorage.getItem('hawker_gemini_api_key') || '' : ''));
   const [saving, setSaving] = useState(false);
+  const [keyStatus, setKeyStatus] = useState<'idle' | 'testing' | 'ok' | 'error'>('idle');
+  const [keyError, setKeyError] = useState('');
+
+  const testGeminiKey = async () => {
+    if (!geminiKey.trim()) { setKeyStatus('error'); setKeyError('Please paste your API key first.'); return; }
+    setKeyStatus('testing');
+    setKeyError('');
+    try {
+      // Use a 1x1 white pixel to validate key without using quota
+      const pixel = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAABAAEDASIAAhEBAxEB/8QAFAABAAAAAAAAAAAAAAAAAAAACf/EABQQAQAAAAAAAAAAAAAAAAAAAAD/xAAUAQEAAAAAAAAAAAAAAAAAAAAA/8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAwDAQACEQMRAD8AJQAB/9k=';
+      await identifyFoodWithGemini(pixel, 'image/jpeg', geminiKey.trim());
+      setKeyStatus('ok');
+      // Save immediately on successful test
+      if (typeof window !== 'undefined') localStorage.setItem('hawker_gemini_api_key', geminiKey.trim());
+    } catch (err: any) {
+      setKeyStatus('error');
+      const msg = err?.message || String(err);
+      if (msg.includes('API_KEY_INVALID') || msg.includes('invalid') || msg.includes('401')) {
+        setKeyError('Invalid API key. Make sure you copied it correctly from aistudio.google.com');
+      } else if (msg.includes('quota') || msg.includes('429')) {
+        setKeyStatus('ok'); // Key is valid, just rate limited
+        setKeyError('');
+      } else {
+        setKeyError('Test failed: ' + msg.slice(0, 80));
+      }
+    }
+  };
 
   const toggleHealth = (cond: string) => {
     if (healthConditions.includes(cond)) {
@@ -297,26 +325,61 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           </div>
 
           {/* Google Gemini AI Vision Key */}
-          <div className="bg-gradient-to-br from-blue-50/60 via-white to-indigo-50/60 p-4 rounded-2xl border border-blue-200/80 space-y-2.5 shadow-soft">
+          <div className={`p-4 rounded-2xl border space-y-2.5 shadow-soft transition-colors ${
+            keyStatus === 'ok' ? 'bg-emerald-50/70 border-emerald-300' :
+            keyStatus === 'error' ? 'bg-red-50/70 border-red-300' :
+            'bg-gradient-to-br from-blue-50/60 via-white to-indigo-50/60 border-blue-200/80'
+          }`}>
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-1.5">
-                <Sparkles className="w-4 h-4 text-blue-600" />
-                <h4 className="text-xs font-black text-slate-900 uppercase tracking-wider">Google Gemini Vision Key</h4>
+                <KeyRound className="w-4 h-4 text-blue-600" />
+                <h4 className="text-xs font-black text-slate-900 uppercase tracking-wider">Google Gemini API Key</h4>
               </div>
-              <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 border border-blue-200">
-                AI Vision
-              </span>
+              {keyStatus === 'ok' && (
+                <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 flex items-center gap-1">
+                  <Check className="w-3 h-3" /> Working
+                </span>
+              )}
+              {keyStatus === 'error' && (
+                <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-red-100 text-red-700 border border-red-300">Invalid Key</span>
+              )}
+              {keyStatus === 'idle' && (
+                <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 border border-blue-200">Required for AI Scan</span>
+              )}
             </div>
+
             <p className="text-[11px] text-stone-600 leading-relaxed">
-              Required to recognize live food photos (Prata, Laksa, etc.) with real Google Gemini 2.5 Flash Vision. You can also set <code className="bg-blue-100 text-blue-900 px-1 py-0.5 rounded text-[10px] font-mono font-bold">GEMINI_API_KEY</code> in Vercel. Get a free key at <a href="https://aistudio.google.com/" target="_blank" rel="noreferrer" className="text-blue-600 font-bold underline">aistudio.google.com</a>.
+              🔑 Needed to identify real food photos (Prata, Laksa, Chicken Rice...). Get a <strong>free</strong> key from{' '}
+              <a href="https://aistudio.google.com/apikey" target="_blank" rel="noreferrer" className="text-blue-600 font-bold underline">aistudio.google.com/apikey</a>{' '}
+              → tap "Create API Key".
             </p>
-            <input
-              type="password"
-              placeholder="Paste your AIzaSy... key here"
-              value={geminiKey}
-              onChange={e => setGeminiKey(e.target.value)}
-              className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-mono text-slate-800 placeholder:text-stone-400 focus:outline-none focus:border-blue-500 bg-white"
-            />
+
+            <div className="flex gap-2">
+              <input
+                type="password"
+                placeholder="Paste AIzaSy... key here"
+                value={geminiKey}
+                onChange={e => { setGeminiKey(e.target.value); setKeyStatus('idle'); }}
+                className="flex-1 px-3 py-2 rounded-xl border border-stone-300 text-xs font-mono text-slate-800 placeholder:text-stone-400 focus:outline-none focus:border-blue-500 bg-white"
+              />
+              <button
+                type="button"
+                onClick={testGeminiKey}
+                disabled={keyStatus === 'testing' || !geminiKey.trim()}
+                className="px-3 py-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-40 text-white rounded-xl text-xs font-bold flex items-center gap-1 whitespace-nowrap transition-all"
+              >
+                {keyStatus === 'testing' ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3" />}
+                {keyStatus === 'testing' ? 'Testing...' : 'Test Key'}
+              </button>
+            </div>
+
+            {keyError && (
+              <p className="text-[11px] text-red-600 font-semibold bg-red-50 rounded-lg px-3 py-2 border border-red-200">{keyError}</p>
+            )}
+
+            {keyStatus === 'ok' && (
+              <p className="text-[11px] text-emerald-700 font-semibold bg-emerald-50 rounded-lg px-3 py-2 border border-emerald-200">✓ Key verified — AI photo scanning is now active!</p>
+            )}
           </div>
         </div>
 
