@@ -73,11 +73,11 @@ export const MealPlanView: React.FC<MealPlanViewProps> = ({ onSelectDish }) => {
   return (
     <div className="p-4 space-y-4 pb-24">
       {/* Top switch bar */}
-      <div className="flex bg-pink-100/60 border border-pink-100/80 p-1 rounded-2xl text-xs font-bold">
+      <div className="flex bg-stone-200/70 p-1 rounded-2xl text-xs font-bold">
         <button
           onClick={() => setViewMode('daily')}
           className={`flex-1 py-2 rounded-xl transition-all flex items-center justify-center space-x-1.5 ${
-            viewMode === 'daily' ? 'bg-white text-slate-900 shadow-sm' : 'text-stone-500 hover:text-rose-500'
+            viewMode === 'daily' ? 'bg-white text-slate-900 shadow-sm' : 'text-stone-500 hover:text-stone-700'
           }`}
         >
           <span>Today's Hawker Plan</span>
@@ -86,10 +86,10 @@ export const MealPlanView: React.FC<MealPlanViewProps> = ({ onSelectDish }) => {
         <button
           onClick={() => setViewMode('weekly')}
           className={`flex-1 py-2 rounded-xl transition-all flex items-center justify-center space-x-1.5 ${
-            viewMode === 'weekly' ? 'bg-white text-slate-900 shadow-sm' : 'text-stone-500 hover:text-rose-500'
+            viewMode === 'weekly' ? 'bg-white text-slate-900 shadow-sm' : 'text-stone-500 hover:text-stone-700'
           }`}
         >
-          <Calendar className="w-3.5 h-3.5 text-rose-500" />
+          <Calendar className="w-3.5 h-3.5 text-[#D9381E]" />
           <span>7-Day Rotation Plan</span>
         </button>
       </div>
@@ -108,17 +108,17 @@ export const MealPlanView: React.FC<MealPlanViewProps> = ({ onSelectDish }) => {
         <div className="flex items-center space-x-2">
           <button
             onClick={loadPlans}
-            className="p-2 bg-white border border-rose-100 rounded-xl text-stone-600 hover:bg-rose-50/50 text-xs font-semibold flex items-center space-x-1 transition-all"
+            className="p-2 bg-white border border-stone-200 rounded-xl text-stone-600 hover:bg-stone-50 text-xs font-semibold flex items-center space-x-1"
             title="Regenerate Plan"
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin text-rose-500' : ''}`} />
+            <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin text-[#D9381E]' : ''}`} />
           </button>
 
           <button
             onClick={handleSharePlan}
-            className="px-3 py-1.5 bg-white border border-rose-100 text-stone-700 hover:bg-rose-50/50 rounded-xl text-xs font-bold flex items-center space-x-1.5 shadow-sm transition-all"
+            className="px-3 py-1.5 bg-white border border-stone-200 text-stone-700 hover:bg-stone-50 rounded-xl text-xs font-bold flex items-center space-x-1.5 shadow-sm"
           >
-            {copied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Share2 className="w-3.5 h-3.5 text-rose-500" />}
+            {copied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Share2 className="w-3.5 h-3.5" />}
             <span>{copied ? 'Copied!' : 'Share'}</span>
           </button>
         </div>
@@ -130,15 +130,15 @@ export const MealPlanView: React.FC<MealPlanViewProps> = ({ onSelectDish }) => {
           {dailyPlan && (
             <>
               {/* Daily Summary Bar */}
-              <div className="bg-gradient-to-r from-rose-50/60 via-pink-50/40 to-rose-50/60 p-3.5 rounded-2xl border border-rose-100 flex items-center justify-between text-xs animate-fade-slide-up">
+              <div className="bg-gradient-to-r from-[#FAF7F2] to-amber-50 p-3.5 rounded-2xl border border-stone-200 flex items-center justify-between text-xs">
                 <div>
-                  <span className="text-[10px] uppercase font-bold text-rose-400 block">Total Planned</span>
-                  <strong className="text-base text-rose-500 font-extrabold">{dailyPlan.total_calories} kcal</strong>
+                  <span className="text-[10px] uppercase font-bold text-stone-400 block">Total Planned</span>
+                  <strong className="text-base text-[#D9381E]">{dailyPlan.total_calories} kcal</strong>
                 </div>
                 <div className="flex space-x-3 text-stone-600">
-                  <span>P: <strong className="text-rose-600">{dailyPlan.total_protein_g}g</strong></span>
-                  <span>C: <strong className="text-pink-600">{dailyPlan.total_carbs_g}g</strong></span>
-                  <span>F: <strong className="text-rose-600">{dailyPlan.total_fat_g}g</strong></span>
+                  <span>P: <strong>{dailyPlan.total_protein_g}g</strong></span>
+                  <span>C: <strong>{dailyPlan.total_carbs_g}g</strong></span>
+                  <span>F: <strong>{dailyPlan.total_fat_g}g</strong></span>
                 </div>
               </div>
 
@@ -148,13 +148,12 @@ export const MealPlanView: React.FC<MealPlanViewProps> = ({ onSelectDish }) => {
                 { slot: 'lunch', label: 'Lunch', dish: dailyPlan.lunch, emoji: '🍲' },
                 { slot: 'dinner', label: 'Dinner', dish: dailyPlan.dinner, emoji: '🥢' },
                 { slot: 'snack', label: 'Hydration / Snack', dish: dailyPlan.snack, emoji: '🥤' }
-              ].map((item, itemIdx) => {
+              ].map(item => {
                 if (!item.dish) return null;
                 return (
                   <div
                     key={item.slot}
-                    className="bg-white rounded-3xl p-4 border border-rose-100 shadow-soft space-y-3 card-hover transition-all animate-fade-slide-up"
-                    style={{ animationDelay: `${itemIdx * 80}ms` }}
+                    className="bg-white rounded-3xl p-4 border border-stone-200 shadow-soft space-y-3"
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-2">
@@ -165,7 +164,7 @@ export const MealPlanView: React.FC<MealPlanViewProps> = ({ onSelectDish }) => {
                       </div>
                       <button
                         onClick={() => handleSwapMeal(item.slot as any)}
-                        className="text-xs text-rose-500 font-bold flex items-center space-x-1 hover:underline bg-pink-50 hover:bg-pink-100/70 border border-pink-100 px-2.5 py-1 rounded-xl transition-all"
+                        className="text-xs text-[#D9381E] font-bold flex items-center space-x-1 hover:underline bg-red-50 px-2.5 py-1 rounded-xl"
                       >
                         <Shuffle className="w-3 h-3" />
                         <span>Swap Dish</span>
@@ -174,7 +173,7 @@ export const MealPlanView: React.FC<MealPlanViewProps> = ({ onSelectDish }) => {
 
                     <div className="flex items-start justify-between">
                       <div>
-                        <span className="text-[10px] font-bold text-rose-500 bg-pink-50 border border-pink-100 px-2 py-0.5 rounded-md">
+                        <span className="text-[10px] font-bold text-[#D9381E] bg-red-50 px-2 py-0.5 rounded-md">
                           {item.dish.category} Stall
                         </span>
                         <h4 className="text-sm font-extrabold text-slate-900 mt-1">
@@ -186,29 +185,29 @@ export const MealPlanView: React.FC<MealPlanViewProps> = ({ onSelectDish }) => {
                       </div>
 
                       <div className="text-right">
-                        <span className="text-base font-black text-rose-500">
+                        <span className="text-base font-black text-slate-800">
                           {item.dish.calories}
                         </span>
-                        <span className="text-[10px] text-rose-400 block -mt-1 font-bold">kcal</span>
+                        <span className="text-[10px] text-stone-400 block -mt-1 font-bold">kcal</span>
                       </div>
                     </div>
 
                     {/* Ordering tip */}
                     {item.dish.healthier_alternative && (
-                      <p className="text-[11px] text-rose-900 bg-rose-50/70 p-2.5 rounded-xl border border-rose-100 font-medium">
+                      <p className="text-[11px] text-emerald-900 bg-emerald-50/80 p-2.5 rounded-xl border border-emerald-100 font-medium">
                         💡 How to order: {item.dish.healthier_alternative}
                       </p>
                     )}
 
-                    <div className="flex items-center justify-between pt-1 border-t border-pink-50 text-[11px] text-stone-500">
+                    <div className="flex items-center justify-between pt-1 border-t border-stone-100 text-[11px] text-stone-500">
                       <div className="flex space-x-3">
-                        <span>P: <strong className="text-rose-600">{item.dish.protein_g}g</strong></span>
-                        <span>C: <strong className="text-pink-600">{item.dish.carbs_g}g</strong></span>
-                        <span>F: <strong className="text-rose-600">{item.dish.fat_g}g</strong></span>
+                        <span>P: <strong>{item.dish.protein_g}g</strong></span>
+                        <span>C: <strong>{item.dish.carbs_g}g</strong></span>
+                        <span>F: <strong>{item.dish.fat_g}g</strong></span>
                       </div>
                       <button
                         onClick={() => onSelectDish(item.dish)}
-                        className="text-xs font-bold text-rose-500 hover:text-rose-600 hover:underline"
+                        className="text-xs font-bold text-[#D9381E] hover:underline"
                       >
                         + Log This Meal
                       </button>
@@ -227,37 +226,36 @@ export const MealPlanView: React.FC<MealPlanViewProps> = ({ onSelectDish }) => {
           {weeklyPlan.map((day, idx) => (
             <div
               key={idx}
-              className="bg-white rounded-3xl p-4 border border-rose-100 shadow-soft space-y-2.5 card-hover transition-all animate-fade-slide-up"
-              style={{ animationDelay: `${idx * 60}ms` }}
+              className="bg-white rounded-3xl p-4 border border-stone-200 shadow-soft space-y-2.5"
             >
-              <div className="flex items-center justify-between border-b border-pink-50 pb-2">
+              <div className="flex items-center justify-between border-b border-stone-100 pb-2">
                 <div className="flex items-center space-x-2">
-                  <span className="w-2.5 h-2.5 rounded-full bg-rose-500" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#D9381E]" />
                   <h3 className="font-extrabold text-sm text-slate-900">{day.day_name}</h3>
                 </div>
-                <span className="text-xs font-extrabold text-rose-500">
+                <span className="text-xs font-extrabold text-[#D9381E]">
                   ~{day.total_calories} kcal
                 </span>
               </div>
 
               {/* Meals summary line */}
               <div className="grid grid-cols-3 gap-2 text-xs">
-                <div className="p-2 rounded-xl bg-rose-50/30 border border-rose-100/70">
-                  <div className="text-[10px] text-rose-400 font-bold uppercase">Breakfast</div>
+                <div className="p-2 rounded-xl bg-stone-50 border border-stone-100">
+                  <div className="text-[10px] text-stone-400 font-bold uppercase">Breakfast</div>
                   <div className="font-bold text-slate-800 truncate mt-0.5">{day.breakfast.name_en}</div>
-                  <div className="text-[10px] text-rose-500 font-semibold">{day.breakfast.calories} kcal</div>
+                  <div className="text-[10px] text-stone-500">{day.breakfast.calories} kcal</div>
                 </div>
 
-                <div className="p-2 rounded-xl bg-rose-50/30 border border-rose-100/70">
-                  <div className="text-[10px] text-rose-400 font-bold uppercase">Lunch</div>
+                <div className="p-2 rounded-xl bg-stone-50 border border-stone-100">
+                  <div className="text-[10px] text-stone-400 font-bold uppercase">Lunch</div>
                   <div className="font-bold text-slate-800 truncate mt-0.5">{day.lunch.name_en}</div>
-                  <div className="text-[10px] text-rose-500 font-semibold">{day.lunch.calories} kcal</div>
+                  <div className="text-[10px] text-stone-500">{day.lunch.calories} kcal</div>
                 </div>
 
-                <div className="p-2 rounded-xl bg-rose-50/30 border border-rose-100/70">
-                  <div className="text-[10px] text-rose-400 font-bold uppercase">Dinner</div>
+                <div className="p-2 rounded-xl bg-stone-50 border border-stone-100">
+                  <div className="text-[10px] text-stone-400 font-bold uppercase">Dinner</div>
                   <div className="font-bold text-slate-800 truncate mt-0.5">{day.dinner.name_en}</div>
-                  <div className="text-[10px] text-rose-500 font-semibold">{day.dinner.calories} kcal</div>
+                  <div className="text-[10px] text-stone-500">{day.dinner.calories} kcal</div>
                 </div>
               </div>
             </div>

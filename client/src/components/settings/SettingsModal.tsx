@@ -111,17 +111,17 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-md flex items-center justify-center p-3 animate-fade-in">
-      <div className="bg-[#FFF8FA] w-full max-w-md rounded-3xl shadow-float overflow-hidden flex flex-col max-h-[92vh] border border-pink-100 animate-scale-in">
+      <div className="bg-[#FAF7F2] w-full max-w-md rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh] border border-stone-200 animate-scale-in">
         
         {/* Header */}
-        <div className="bg-white/95 backdrop-blur-md px-5 py-3.5 border-b border-pink-100/80 flex items-center justify-between">
+        <div className="bg-white px-5 py-3.5 border-b border-stone-200 flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <User className="w-4 h-4 text-rose-500" />
+            <User className="w-4 h-4 text-[#D9381E]" />
             <h3 className="font-extrabold text-sm text-slate-900">Profile & Settings</h3>
           </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 rounded-full bg-pink-50 flex items-center justify-center text-stone-400 hover:text-rose-600 hover:bg-pink-100 hover:rotate-90 transition-all"
+            className="w-8 h-8 rounded-full bg-stone-100 flex items-center justify-center text-stone-500 hover:bg-stone-200 hover:rotate-90 transition-all"
           >
             <X className="w-4 h-4" />
           </button>
@@ -131,10 +131,10 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
         <div className="p-5 overflow-y-auto space-y-4 flex-1 no-scrollbar">
           
           {/* User Account Card */}
-          <div className="bg-white p-4 rounded-2xl border border-pink-100/70 shadow-soft space-y-2.5">
+          <div className="bg-white p-4 rounded-2xl border border-stone-200 shadow-soft space-y-2.5">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
-                <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-rose-500 to-pink-500 text-white flex items-center justify-center font-black text-sm shadow-sm shadow-pink-200">
+                <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#D9381E] to-[#EA580C] text-white flex items-center justify-center font-black text-sm shadow-sm">
                   {name.charAt(0).toUpperCase()}
                 </div>
                 <div>
@@ -152,7 +152,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                     onClose();
                     onLogout();
                   }}
-                  className="px-3 py-1.5 rounded-xl border border-pink-200 hover:bg-pink-50 text-rose-600 font-bold text-xs flex items-center space-x-1.5 transition-all"
+                  className="px-3 py-1.5 rounded-xl border border-red-200 hover:bg-red-50 text-red-600 font-bold text-xs flex items-center space-x-1.5 transition-all"
                 >
                   <LogOut className="w-3 h-3" />
                   <span>Sign Out</span>
@@ -162,14 +162,14 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           </div>
 
           {/* User Name & Goal */}
-          <div className="bg-white p-4 rounded-2xl border border-pink-100/70 space-y-3 shadow-soft">
+          <div className="bg-white p-4 rounded-2xl border border-stone-200 space-y-3 shadow-soft">
             <div>
               <label className="block text-xs font-bold text-slate-800 mb-1">Your Name</label>
               <input
                 type="text"
                 value={name}
                 onChange={e => setName(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl border border-pink-200 text-xs font-semibold text-slate-800 focus:outline-none focus:border-rose-400 focus:ring-2 focus:ring-rose-400/20"
+                className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-semibold text-slate-800 focus:outline-none focus:border-[#D9381E]"
               />
             </div>
 
@@ -178,7 +178,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               <select
                 value={goal}
                 onChange={e => setGoal(e.target.value as any)}
-                className="w-full px-3 py-2 rounded-xl border border-pink-200 text-xs font-semibold text-slate-800 bg-white focus:outline-none focus:border-rose-400 focus:ring-2 focus:ring-rose-400/20"
+                className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-semibold text-slate-800 bg-white focus:outline-none focus:border-[#D9381E]"
               >
                 <option value="lose_weight">Lose Weight (-500 kcal/day)</option>
                 <option value="maintain">Maintain Current Weight (TDEE)</option>
@@ -189,7 +189,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           </div>
 
           {/* Body Stats */}
-          <div className="bg-white p-4 rounded-2xl border border-pink-100/70 space-y-3 shadow-soft">
+          <div className="bg-white p-4 rounded-2xl border border-stone-200 space-y-3 shadow-soft">
             <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider">Physical Stats</h4>
             
             <div className="grid grid-cols-2 gap-2.5">
@@ -199,7 +199,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   type="number"
                   value={age}
                   onChange={e => setAge(Number(e.target.value))}
-                  className="w-full px-3 py-1.5 rounded-xl border border-pink-200 text-xs font-bold text-slate-800 focus:border-rose-400 focus:outline-none"
+                  className="w-full px-3 py-1.5 rounded-xl border border-stone-300 text-xs font-bold text-slate-800"
                 />
               </div>
 
@@ -209,7 +209,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   type="number"
                   value={height}
                   onChange={e => setHeight(Number(e.target.value))}
-                  className="w-full px-3 py-1.5 rounded-xl border border-pink-200 text-xs font-bold text-slate-800 focus:border-rose-400 focus:outline-none"
+                  className="w-full px-3 py-1.5 rounded-xl border border-stone-300 text-xs font-bold text-slate-800"
                 />
               </div>
 
@@ -219,7 +219,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   type="number"
                   value={currentWeight}
                   onChange={e => setCurrentWeight(Number(e.target.value))}
-                  className="w-full px-3 py-1.5 rounded-xl border border-pink-200 text-xs font-bold text-slate-800 focus:border-rose-400 focus:outline-none"
+                  className="w-full px-3 py-1.5 rounded-xl border border-stone-300 text-xs font-bold text-slate-800"
                 />
               </div>
 
@@ -229,7 +229,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   type="number"
                   value={targetWeight}
                   onChange={e => setTargetWeight(Number(e.target.value))}
-                  className="w-full px-3 py-1.5 rounded-xl border border-pink-200 text-xs font-bold text-slate-800 focus:border-rose-400 focus:outline-none"
+                  className="w-full px-3 py-1.5 rounded-xl border border-stone-300 text-xs font-bold text-slate-800"
                 />
               </div>
             </div>
@@ -239,7 +239,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               <select
                 value={activityLevel}
                 onChange={e => setActivityLevel(e.target.value as any)}
-                className="w-full px-3 py-2 rounded-xl border border-pink-200 text-xs font-semibold text-slate-800 bg-white focus:border-rose-400 focus:outline-none"
+                className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-semibold text-slate-800 bg-white"
               >
                 <option value="sedentary">Sedentary (desk job, low activity)</option>
                 <option value="lightly_active">Lightly Active (1-3 days exercise)</option>
@@ -250,9 +250,9 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           </div>
 
           {/* Health Conditions (Dynamic Sodium/Sugar Caps) */}
-          <div className="bg-white p-4 rounded-2xl border border-pink-100/70 space-y-2.5 shadow-soft">
+          <div className="bg-white p-4 rounded-2xl border border-stone-200 space-y-2.5 shadow-soft">
             <div className="flex items-center space-x-1.5">
-              <HeartPulse className="w-4 h-4 text-rose-500" />
+              <HeartPulse className="w-4 h-4 text-[#D9381E]" />
               <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
                 Health Conditions (HPB Caps)
               </h4>
@@ -276,12 +276,12 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                     onClick={() => toggleHealth(h.id)}
                     className={`w-full p-2.5 rounded-xl border text-left text-xs font-medium flex items-center justify-between transition-all ${
                       active
-                        ? 'bg-pink-50 border-rose-400 text-rose-950 font-bold shadow-sm'
-                        : 'bg-stone-50/70 border-stone-200 text-stone-600 hover:border-pink-200'
+                        ? 'bg-amber-50 border-amber-400 text-amber-950 font-bold'
+                        : 'bg-stone-50 border-stone-200 text-stone-600'
                     }`}
                   >
                     <span>{h.label}</span>
-                    {active && <Check className="w-4 h-4 text-rose-600 shrink-0" />}
+                    {active && <Check className="w-4 h-4 text-amber-600 shrink-0" />}
                   </button>
                 );
               })}
@@ -289,15 +289,15 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           </div>
 
           {/* AI Continuous Vision Learning Status Card */}
-          <div className="bg-gradient-to-br from-pink-50/80 via-white to-rose-50/60 p-4 rounded-2xl border border-pink-200/80 shadow-soft space-y-2">
+          <div className="bg-gradient-to-br from-red-50/70 via-white to-amber-50/70 p-4 rounded-2xl border border-red-100 shadow-soft space-y-2">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-1.5">
-                <BrainCircuit className="w-4 h-4 text-rose-500" />
+                <BrainCircuit className="w-4 h-4 text-[#D9381E]" />
                 <h4 className="text-xs font-black text-slate-900 uppercase tracking-wider">
                   Continuous Vision Training
                 </h4>
               </div>
-              <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-pink-100 text-rose-800 border border-pink-200">
+              <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">
                 Self-Improving Active
               </span>
             </div>
@@ -307,9 +307,9 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           </div>
 
           {/* Backend API Configuration (Mobile / Android Studio) */}
-          <div className="bg-white p-4 rounded-2xl border border-pink-100/70 space-y-2.5 shadow-soft">
+          <div className="bg-white p-4 rounded-2xl border border-stone-200 space-y-2.5 shadow-soft">
             <div className="flex items-center space-x-1.5">
-              <Globe className="w-4 h-4 text-rose-500" />
+              <Globe className="w-4 h-4 text-emerald-600" />
               <h4 className="text-xs font-black text-slate-900 uppercase tracking-wider">Backend Server API</h4>
             </div>
             <p className="text-[11px] text-stone-500">
@@ -320,19 +320,19 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               placeholder="e.g. http://10.0.2.2:5000/api or https://your-server.vercel.app/api"
               value={apiUrl}
               onChange={e => setApiUrl(e.target.value)}
-              className="w-full px-3 py-2 rounded-xl border border-pink-200 text-xs font-mono text-slate-800 placeholder:text-stone-400 focus:outline-none focus:border-rose-400 focus:ring-2 focus:ring-rose-400/20"
+              className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-mono text-slate-800 placeholder:text-stone-400 focus:outline-none focus:border-[#D9381E]"
             />
           </div>
 
           {/* Google Gemini AI Vision Status */}
-          <div className="p-4 rounded-2xl border bg-gradient-to-br from-pink-50/70 via-white to-rose-50/70 border-pink-200/80 space-y-2 shadow-soft">
+          <div className="p-4 rounded-2xl border bg-gradient-to-br from-emerald-50/70 via-white to-teal-50/70 border-emerald-300 space-y-2 shadow-soft">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
-                <Sparkles className="w-4 h-4 text-rose-500" />
+                <Sparkles className="w-4 h-4 text-emerald-600" />
                 <h4 className="text-xs font-black text-slate-900 uppercase tracking-wider">Google Gemini Vision AI</h4>
               </div>
-              <span className="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-pink-100 text-rose-800 border border-pink-200 flex items-center gap-1">
-                <Check className="w-3 h-3 text-rose-600" /> Connected & Active
+              <span className="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 flex items-center gap-1">
+                <Check className="w-3 h-3 text-emerald-600" /> Connected & Active
               </span>
             </div>
             <p className="text-[11px] text-stone-600 leading-relaxed">
@@ -342,11 +342,11 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
         </div>
 
         {/* Footer Save Button */}
-        <div className="p-4 bg-white/95 backdrop-blur-md border-t border-pink-100">
+        <div className="p-4 bg-white border-t border-stone-200">
           <button
             onClick={handleSave}
             disabled={saving}
-            className="w-full py-3.5 bg-gradient-to-r from-rose-500 via-pink-500 to-rose-500 hover:opacity-95 active:scale-[0.99] text-white rounded-2xl font-black text-xs flex items-center justify-center space-x-1.5 shadow-md shadow-pink-500/25 transition-all press-anim"
+            className="w-full py-3.5 bg-gradient-to-r from-[#D9381E] to-[#EA580C] hover:opacity-95 active:scale-[0.99] text-white rounded-2xl font-black text-xs flex items-center justify-center space-x-1.5 shadow-md shadow-red-500/20 transition-all press-anim"
           >
             <Save className="w-4 h-4" />
             <span>{saving ? 'Updating Targets...' : 'Save Profile Changes'}</span>

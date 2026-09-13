@@ -137,12 +137,12 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-[#FFF8FA] w-full max-w-md rounded-3xl shadow-float overflow-hidden flex flex-col max-h-[92vh] border border-pink-100">
+      <div className="bg-[#FAF7F2] w-full max-w-md rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh] border border-stone-200">
         
         {/* Header with Progress Bar */}
-        <div className="bg-gradient-to-r from-rose-500 via-pink-500 to-rose-400 text-white p-5 pb-6 relative">
+        <div className="bg-gradient-to-r from-[#D9381E] to-[#EA580C] text-white p-5 pb-6 relative">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs uppercase font-bold tracking-widest text-pink-100">
+            <span className="text-xs uppercase font-bold tracking-widest text-red-100">
               Personalised SG Tracker
             </span>
             <span className="text-xs font-semibold bg-white/20 px-2 py-0.5 rounded-full">
@@ -156,7 +156,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
             {step === 4 && 'Health & Allergies'}
             {step === 5 && 'Your Hawker Targets'}
           </h2>
-          <p className="text-xs text-pink-100 mt-1">
+          <p className="text-xs text-red-100 mt-1">
             {step === 1 && 'Personalize your daily calorie and macro budget.'}
             {step === 2 && 'Used for Mifflin-St Jeor BMR & TDEE calculation.'}
             {step === 3 && 'We will tailor hawker recommendations to fit.'}
@@ -199,8 +199,8 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                     onClick={() => setGoal(item.id as any)}
                     className={`flex items-start p-3.5 rounded-2xl border text-left transition-all ${
                       goal === item.id
-                        ? 'bg-pink-50/80 border-rose-400 shadow-sm ring-1 ring-rose-400'
-                        : 'bg-white border-pink-100/80 hover:border-pink-200'
+                        ? 'bg-red-50/80 border-[#D9381E] shadow-sm ring-1 ring-[#D9381E]'
+                        : 'bg-white border-stone-200 hover:border-stone-300'
                     }`}
                   >
                     <span className="text-2xl mr-3">{item.icon}</span>
@@ -209,7 +209,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                       <div className="text-xs text-stone-500 mt-0.5">{item.desc}</div>
                     </div>
                     {goal === item.id && (
-                      <div className="w-5 h-5 rounded-full bg-rose-500 text-white flex items-center justify-center">
+                      <div className="w-5 h-5 rounded-full bg-[#D9381E] text-white flex items-center justify-center">
                         <Check className="w-3 h-3 stroke-[3]" />
                       </div>
                     )}
@@ -226,7 +226,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                     type="number"
                     value={targetWeight}
                     onChange={e => setTargetWeight(Number(e.target.value))}
-                    className="w-full px-4 py-2.5 rounded-xl border border-pink-200 bg-white font-semibold text-slate-800 focus:outline-none focus:border-rose-400 focus:ring-2 focus:ring-rose-400/20"
+                    className="w-full px-4 py-2.5 rounded-xl border border-stone-300 bg-white font-semibold text-slate-800 focus:outline-none focus:border-[#D9381E]"
                   />
                 </div>
               )}
@@ -267,7 +267,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                     type="number"
                     value={age}
                     onChange={e => setAge(Number(e.target.value))}
-                    className="w-full px-3 py-2 rounded-xl border border-pink-200 bg-white font-bold text-slate-800 focus:outline-none focus:border-rose-400 focus:ring-2 focus:ring-rose-400/20"
+                    className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white font-bold text-slate-800 focus:outline-none focus:border-[#D9381E]"
                   />
                 </div>
               </div>
@@ -279,7 +279,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                     type="number"
                     value={height}
                     onChange={e => setHeight(Number(e.target.value))}
-                    className="w-full px-3 py-2 rounded-xl border border-pink-200 bg-white font-bold text-slate-800 focus:outline-none focus:border-rose-400 focus:ring-2 focus:ring-rose-400/20"
+                    className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white font-bold text-slate-800 focus:outline-none focus:border-[#D9381E]"
                   />
                 </div>
                 <div>
@@ -288,7 +288,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                     type="number"
                     value={currentWeight}
                     onChange={e => setCurrentWeight(Number(e.target.value))}
-                    className="w-full px-3 py-2 rounded-xl border border-pink-200 bg-white font-bold text-slate-800 focus:outline-none focus:border-rose-400 focus:ring-2 focus:ring-rose-400/20"
+                    className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white font-bold text-slate-800 focus:outline-none focus:border-[#D9381E]"
                   />
                 </div>
               </div>
@@ -310,15 +310,15 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                       onClick={() => setActivityLevel(act.id as any)}
                       className={`p-2.5 rounded-xl border text-left flex items-center justify-between text-xs transition-all ${
                         activityLevel === act.id
-                          ? 'bg-pink-50 border-rose-400 text-slate-900 font-bold shadow-sm'
-                          : 'bg-white border-pink-100/70 text-stone-600 hover:border-pink-200'
+                          ? 'bg-red-50 border-[#D9381E] text-slate-900 font-bold'
+                          : 'bg-white border-stone-200 text-stone-600'
                       }`}
                     >
                       <div>
                         <div className="font-semibold text-slate-800">{act.label}</div>
                         <div className="text-[11px] text-stone-500">{act.sub}</div>
                       </div>
-                      {activityLevel === act.id && <Check className="w-4 h-4 text-rose-500" />}
+                      {activityLevel === act.id && <Check className="w-4 h-4 text-[#D9381E]" />}
                     </button>
                   ))}
                 </div>
@@ -349,13 +349,13 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                       onClick={() => toggleDietary(item.id)}
                       className={`p-3 rounded-2xl border text-left flex items-center space-x-2 transition-all ${
                         active
-                          ? 'bg-pink-50 border-rose-400 text-rose-950 font-bold ring-1 ring-rose-400 shadow-sm'
-                          : 'bg-white border-pink-100/80 text-stone-700 hover:border-pink-200'
+                          ? 'bg-emerald-50 border-emerald-600 text-emerald-950 font-bold ring-1 ring-emerald-600'
+                          : 'bg-white border-stone-200 text-stone-700 hover:border-stone-300'
                       }`}
                     >
                       <span className="text-lg">{item.emoji}</span>
                       <span className="text-xs flex-1">{item.label}</span>
-                      {active && <Check className="w-3.5 h-3.5 text-rose-600" />}
+                      {active && <Check className="w-3.5 h-3.5 text-emerald-600" />}
                     </button>
                   );
                 })}
@@ -368,7 +368,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
             <div className="space-y-4">
               <div>
                 <div className="flex items-center space-x-1.5 mb-2">
-                  <HeartPulse className="w-4 h-4 text-rose-500" />
+                  <HeartPulse className="w-4 h-4 text-[#D9381E]" />
                   <label className="text-xs font-bold text-slate-800 uppercase tracking-wider">
                     Health Conditions (Optional)
                   </label>
@@ -391,15 +391,15 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                         onClick={() => toggleHealth(h.id)}
                         className={`p-3 rounded-xl border text-left flex items-start justify-between transition-all ${
                           active
-                            ? 'bg-pink-50/80 border-rose-400 ring-1 ring-rose-400 text-rose-950 font-semibold shadow-sm'
-                            : 'bg-white border-pink-100/70 text-stone-600 hover:border-pink-200'
+                            ? 'bg-amber-50/80 border-amber-500 ring-1 ring-amber-500 text-amber-950 font-semibold'
+                            : 'bg-white border-stone-200 text-stone-600'
                         }`}
                       >
                         <div>
                           <div className="text-xs font-bold text-slate-900">{h.title}</div>
                           <div className="text-[11px] text-stone-500 mt-0.5">{h.note}</div>
                         </div>
-                        {active && <Check className="w-4 h-4 text-rose-500 shrink-0 ml-2 mt-0.5" />}
+                        {active && <Check className="w-4 h-4 text-amber-600 shrink-0 ml-2 mt-0.5" />}
                       </button>
                     );
                   })}
@@ -408,7 +408,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
 
               <div className="pt-2">
                 <div className="flex items-center space-x-1.5 mb-2">
-                  <ShieldAlert className="w-4 h-4 text-rose-500" />
+                  <ShieldAlert className="w-4 h-4 text-amber-600" />
                   <label className="text-xs font-bold text-slate-800 uppercase tracking-wider">
                     Allergies & Intolerances
                   </label>
@@ -423,8 +423,8 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                         onClick={() => toggleAllergy(al)}
                         className={`px-3 py-1.5 rounded-full text-xs font-medium border capitalize transition-all ${
                           active
-                            ? 'bg-pink-100 border-rose-300 text-rose-800 font-bold shadow-sm'
-                            : 'bg-white border-pink-100/80 text-stone-600 hover:border-pink-200'
+                            ? 'bg-red-100 border-red-400 text-red-800 font-bold'
+                            : 'bg-white border-stone-200 text-stone-600 hover:border-stone-300'
                         }`}
                       >
                         {al}
@@ -439,11 +439,11 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
           {/* STEP 5: CALCULATED TARGETS SUMMARY */}
           {step === 5 && (
             <div className="space-y-4">
-              <div className="bg-gradient-to-br from-pink-50 to-rose-50/70 border border-pink-200/80 p-4 rounded-2xl text-center shadow-soft">
-                <span className="text-[11px] uppercase font-bold tracking-wider text-rose-700">
+              <div className="bg-gradient-to-br from-amber-50 to-orange-50/70 border border-amber-200/80 p-4 rounded-2xl text-center">
+                <span className="text-[11px] uppercase font-bold tracking-wider text-amber-800">
                   Daily Calorie Target
                 </span>
-                <div className="text-4xl font-extrabold text-rose-600 mt-1 tracking-tight">
+                <div className="text-4xl font-extrabold text-[#D9381E] mt-1 tracking-tight">
                   {targetCalories} <span className="text-lg font-bold text-stone-500">kcal</span>
                 </div>
                 <div className="text-xs text-stone-600 mt-1 flex justify-center space-x-3">
@@ -455,19 +455,19 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
 
               {/* Macro breakdown */}
               <div className="grid grid-cols-3 gap-2">
-                <div className="bg-white p-3 rounded-2xl border border-pink-100/70 shadow-soft text-center">
+                <div className="bg-white p-3 rounded-2xl border border-stone-200 text-center">
                   <div className="text-[10px] uppercase font-bold text-blue-600">Protein</div>
                   <div className="text-xl font-extrabold text-slate-800 mt-0.5">{targetProtein}g</div>
                   <div className="text-[10px] text-stone-400">{Math.round((targetProtein * 4 * 100) / targetCalories)}% cal</div>
                 </div>
 
-                <div className="bg-white p-3 rounded-2xl border border-pink-100/70 shadow-soft text-center">
+                <div className="bg-white p-3 rounded-2xl border border-stone-200 text-center">
                   <div className="text-[10px] uppercase font-bold text-amber-600">Carbs</div>
                   <div className="text-xl font-extrabold text-slate-800 mt-0.5">{targetCarbs}g</div>
                   <div className="text-[10px] text-stone-400">{Math.round((targetCarbs * 4 * 100) / targetCalories)}% cal</div>
                 </div>
 
-                <div className="bg-white p-3 rounded-2xl border border-pink-100/70 shadow-soft text-center">
+                <div className="bg-white p-3 rounded-2xl border border-stone-200 text-center">
                   <div className="text-[10px] uppercase font-bold text-rose-600">Fat</div>
                   <div className="text-xl font-extrabold text-slate-800 mt-0.5">{targetFat}g</div>
                   <div className="text-[10px] text-stone-400">28% cal</div>
@@ -475,9 +475,9 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
               </div>
 
               {/* Health Caps */}
-              <div className="bg-white p-3.5 rounded-2xl border border-pink-100/70 shadow-soft space-y-2">
+              <div className="bg-white p-3.5 rounded-2xl border border-stone-200 space-y-2">
                 <div className="text-xs font-bold text-slate-800">Singapore Health Caps</div>
-                <div className="flex items-center justify-between text-xs py-1 border-b border-pink-100/60">
+                <div className="flex items-center justify-between text-xs py-1 border-b border-stone-100">
                   <span className="text-stone-600">Sodium Limit (HPB Salt War)</span>
                   <span className={`font-bold ${healthConditions.includes('hypertension') ? 'text-amber-600' : 'text-slate-800'}`}>
                     &lt; {targetSodium} mg/day
@@ -495,12 +495,12 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
         </div>
 
         {/* Footer Navigation Buttons */}
-        <div className="p-4 bg-white/95 backdrop-blur-md border-t border-pink-100 flex items-center justify-between">
+        <div className="p-4 bg-white border-t border-stone-200 flex items-center justify-between">
           {step > 1 ? (
             <button
               type="button"
               onClick={() => setStep(step - 1)}
-              className="px-4 py-2.5 rounded-xl border border-pink-200 text-stone-700 font-semibold text-xs flex items-center space-x-1 hover:bg-pink-50 hover:text-rose-600 transition-colors"
+              className="px-4 py-2.5 rounded-xl border border-stone-200 text-stone-700 font-semibold text-xs flex items-center space-x-1 hover:bg-stone-50"
             >
               <ChevronLeft className="w-4 h-4" />
               <span>Back</span>
@@ -513,7 +513,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
             <button
               type="button"
               onClick={() => setStep(step + 1)}
-              className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white font-bold text-xs flex items-center space-x-1 shadow-md shadow-pink-500/20 active:scale-95 transition-all"
+              className="px-6 py-2.5 rounded-xl bg-[#D9381E] hover:bg-[#B91C1C] text-white font-bold text-xs flex items-center space-x-1 shadow-md shadow-red-500/20"
             >
               <span>Continue</span>
               <ChevronRight className="w-4 h-4" />
@@ -523,7 +523,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
               type="button"
               disabled={loading}
               onClick={handleSubmit}
-              className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-rose-500 via-pink-500 to-rose-500 text-white font-bold text-xs flex items-center space-x-1.5 shadow-lg shadow-pink-500/25 hover:opacity-95 active:scale-95 transition-all"
+              className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#D9381E] to-[#EA580C] text-white font-bold text-xs flex items-center space-x-1.5 shadow-lg shadow-red-500/30 hover:opacity-95"
             >
               <Sparkles className="w-4 h-4" />
               <span>{loading ? 'Calculating...' : 'Start Makan Tracking!'}</span>

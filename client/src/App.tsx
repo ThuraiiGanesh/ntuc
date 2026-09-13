@@ -175,11 +175,11 @@ export function App() {
   // If loading session check
   if (loading && !currentUser) {
     return (
-      <div className="min-h-screen bg-[#FFF8FA] flex flex-col items-center justify-center p-4 space-y-3">
-        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-rose-500 via-pink-500 to-rose-400 animate-spin flex items-center justify-center text-white font-black text-xl shadow-lg shadow-pink-500/25">
+      <div className="min-h-screen bg-[#FAF7F2] flex flex-col items-center justify-center p-4 space-y-3">
+        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#D9381E] to-[#EA580C] animate-spin flex items-center justify-center text-white font-black text-xl shadow-lg">
           🍲
         </div>
-        <p className="text-xs font-bold text-rose-500/80 animate-pulse">Connecting to Hawker Nutrition DB...</p>
+        <p className="text-xs font-bold text-stone-500 animate-pulse">Connecting to Hawker Nutrition DB...</p>
       </div>
     );
   }
@@ -190,7 +190,7 @@ export function App() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FBF0F4] flex justify-center selection:bg-pink-500 selection:text-white">
+    <div className="min-h-screen bg-[#EDE7DE] flex justify-center selection:bg-red-500 selection:text-white">
       {/* Mobile-first Frame Container */}
       <div className="mobile-app-shell w-full flex flex-col">
         

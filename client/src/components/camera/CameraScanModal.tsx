@@ -194,8 +194,8 @@ export const CameraScanModal: React.FC<CameraScanModalProps> = ({
         <div className="px-5 py-3.5 flex items-center justify-between border-b border-stone-800/60 bg-black/20">
           <div className="flex items-center space-x-2.5">
             <div className="relative w-7 h-7 rounded-full flex items-center justify-center">
-              <span className="absolute inset-0 rounded-full bg-rose-500 opacity-20 animate-ping" style={{ animationDuration: '2s' }} />
-              <span className="w-2.5 h-2.5 rounded-full bg-rose-500 relative z-10" />
+              <span className="absolute inset-0 rounded-full bg-[#D9381E] opacity-20 animate-ping" style={{ animationDuration: '2s' }} />
+              <span className="w-2.5 h-2.5 rounded-full bg-[#D9381E] relative z-10" />
             </div>
             <div>
               <h3 className="font-black text-sm tracking-tight text-stone-100 leading-none">AI Food Scanner</h3>
@@ -226,7 +226,7 @@ export const CameraScanModal: React.FC<CameraScanModalProps> = ({
               }}
               className={`flex-1 py-2 rounded-xl transition-all flex items-center justify-center space-x-1.5 ${
                 activeMode === tab.id
-                  ? 'bg-gradient-to-r from-rose-500 to-pink-500 text-white shadow-lg shadow-pink-500/20 font-extrabold'
+                  ? 'bg-gradient-to-r from-[#D9381E] to-[#EA580C] text-white shadow-lg font-extrabold'
                   : 'text-stone-500 hover:text-stone-200 hover:bg-stone-800/50'
               }`}
             >
@@ -255,7 +255,7 @@ export const CameraScanModal: React.FC<CameraScanModalProps> = ({
                   'bottom-16 left-6 border-b-2 border-l-2',
                   'bottom-16 right-6 border-b-2 border-r-2',
                 ].map((cls, i) => (
-                  <div key={i} className={`absolute w-7 h-7 border-rose-400 ${cls}`} />
+                  <div key={i} className={`absolute w-7 h-7 border-[#D9381E] ${cls}`} />
                 ))}
                 {/* Center guide */}
                 <div className="absolute inset-6 bottom-16 border border-white/15 rounded-xl" />
@@ -268,7 +268,7 @@ export const CameraScanModal: React.FC<CameraScanModalProps> = ({
                   onClick={captureFromVideo}
                   className="w-16 h-16 rounded-full bg-white p-1.5 shadow-2xl hover:scale-105 active:scale-95 transition-all press-anim"
                 >
-                  <div className="w-full h-full rounded-full border-4 border-stone-900/20 bg-gradient-to-br from-rose-500 to-pink-500" />
+                  <div className="w-full h-full rounded-full border-4 border-stone-900/20 bg-gradient-to-br from-[#D9381E] to-[#EA580C]" />
                 </button>
               </div>
             </div>
@@ -281,7 +281,7 @@ export const CameraScanModal: React.FC<CameraScanModalProps> = ({
                 <span className="text-xs font-extrabold text-stone-300 uppercase tracking-wider">
                   Tap a dish to try AI Vision:
                 </span>
-                <span className="text-[10px] bg-pink-950/80 text-pink-300 px-2 py-0.5 rounded-full border border-pink-900/40 font-bold">
+                <span className="text-[10px] bg-red-950 text-red-300 px-2 py-0.5 rounded-full border border-red-900/50 font-bold">
                   Instant Demo
                 </span>
               </div>
@@ -291,7 +291,7 @@ export const CameraScanModal: React.FC<CameraScanModalProps> = ({
                   <button
                     key={dish.id}
                     onClick={() => handleSampleClick(dish)}
-                    className="group text-left relative aspect-[4/3] rounded-2xl overflow-hidden border border-stone-700/60 hover:border-rose-400 transition-all duration-200 hover:scale-[1.02] shadow-md animate-fade-slide-up press-anim"
+                    className="group text-left relative aspect-[4/3] rounded-2xl overflow-hidden border border-stone-700/60 hover:border-[#D9381E] transition-all duration-200 hover:scale-[1.02] shadow-md animate-fade-slide-up press-anim"
                     style={{ animationDelay: `${idx * 60}ms` }}
                   >
                     <img
@@ -309,7 +309,7 @@ export const CameraScanModal: React.FC<CameraScanModalProps> = ({
                     </div>
                     {/* Hover scan indicator */}
                     <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-black/30">
-                      <div className="w-10 h-10 rounded-full bg-rose-500/90 flex items-center justify-center shadow-lg">
+                      <div className="w-10 h-10 rounded-full bg-[#D9381E]/90 flex items-center justify-center shadow-lg">
                         <Scan className="w-5 h-5 text-white" />
                       </div>
                     </div>
@@ -323,16 +323,16 @@ export const CameraScanModal: React.FC<CameraScanModalProps> = ({
           {activeMode === 'upload' && (
             <div
               onClick={() => fileInputRef.current?.click()}
-              className="aspect-[4/3] border-2 border-dashed border-stone-700 hover:border-rose-400 rounded-2xl flex flex-col items-center justify-center p-6 text-center cursor-pointer transition-all duration-200 bg-stone-900/30 hover:bg-stone-900/50 group animate-scale-in"
+              className="aspect-[4/3] border-2 border-dashed border-stone-700 hover:border-[#D9381E] rounded-2xl flex flex-col items-center justify-center p-6 text-center cursor-pointer transition-all duration-200 bg-stone-900/30 hover:bg-stone-900/50 group animate-scale-in"
             >
-              <div className="w-14 h-14 rounded-2xl bg-stone-800 group-hover:bg-rose-500/20 flex items-center justify-center text-stone-400 group-hover:text-rose-400 mb-4 transition-all duration-200 border border-stone-700 group-hover:border-rose-400/50">
+              <div className="w-14 h-14 rounded-2xl bg-stone-800 group-hover:bg-[#D9381E]/20 flex items-center justify-center text-stone-400 group-hover:text-[#D9381E] mb-4 transition-all duration-200 border border-stone-700 group-hover:border-[#D9381E]/50">
                 <ImageIcon className="w-7 h-7" />
               </div>
               <h4 className="text-sm font-extrabold text-stone-200">Choose a Food Photo</h4>
               <p className="text-xs text-stone-500 mt-1 leading-relaxed">JPEG, PNG, or WebP from your camera roll</p>
               <button
                 type="button"
-                className="mt-4 px-5 py-2 bg-stone-800 group-hover:bg-rose-500 rounded-xl text-xs font-bold text-stone-200 group-hover:text-white transition-all duration-200"
+                className="mt-4 px-5 py-2 bg-stone-800 group-hover:bg-[#D9381E] rounded-xl text-xs font-bold text-stone-200 group-hover:text-white transition-all duration-200"
               >
                 Browse Gallery
               </button>
@@ -348,7 +348,7 @@ export const CameraScanModal: React.FC<CameraScanModalProps> = ({
               {[0, 1, 2].map(i => (
                 <div
                   key={i}
-                  className="absolute rounded-full border border-rose-500/40"
+                  className="absolute rounded-full border border-[#D9381E]/40"
                   style={{
                     inset: `${i * 12}px`,
                     animation: `ping ${1.5 + i * 0.4}s cubic-bezier(0,0,0.2,1) infinite`,
@@ -358,15 +358,15 @@ export const CameraScanModal: React.FC<CameraScanModalProps> = ({
               ))}
 
               {/* Center image */}
-              <div className="w-28 h-28 rounded-2xl overflow-hidden border-2 border-rose-400 shadow-2xl shadow-pink-500/30 relative">
+              <div className="w-28 h-28 rounded-2xl overflow-hidden border-2 border-[#D9381E] shadow-2xl shadow-red-500/30 relative">
                 {previewUrl && (
                   <img src={previewUrl} alt="Analyzing" className="w-full h-full object-cover opacity-70 blur-[0.5px]" />
                 )}
                 {/* Laser sweep */}
-                <div className="radar-laser absolute left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-rose-400 to-transparent shadow-[0_0_14px_3px_#F43F5E]" />
+                <div className="radar-laser absolute left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-red-400 to-transparent shadow-[0_0_14px_3px_#D9381E]" />
                 {/* Sparkle */}
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <Sparkles className="w-7 h-7 text-pink-300 animate-spin-slow" />
+                  <Sparkles className="w-7 h-7 text-[#F59E0B] animate-spin-slow" />
                 </div>
               </div>
             </div>
@@ -380,7 +380,7 @@ export const CameraScanModal: React.FC<CameraScanModalProps> = ({
                 <div
                   key={i}
                   className={`h-1 rounded-full transition-all duration-500 ${
-                    i <= scanPhase ? 'bg-gradient-to-r from-rose-500 to-pink-500 w-8' : 'bg-stone-700 w-3'
+                    i <= scanPhase ? 'bg-[#D9381E] w-8' : 'bg-stone-700 w-3'
                   }`}
                 />
               ))}
@@ -397,7 +397,7 @@ export const CameraScanModal: React.FC<CameraScanModalProps> = ({
           <button
             type="button"
             onClick={onOpenManualSearch}
-            className="text-xs text-stone-500 hover:text-rose-400 font-semibold underline underline-offset-4 transition-colors"
+            className="text-xs text-stone-500 hover:text-stone-200 font-semibold underline underline-offset-4 transition-colors"
           >
             Search food name manually without photo
           </button>

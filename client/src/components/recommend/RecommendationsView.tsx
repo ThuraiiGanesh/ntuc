@@ -74,24 +74,24 @@ export const RecommendationsView: React.FC<RecommendationsViewProps> = ({
   return (
     <div className="p-4 space-y-4 pb-24">
       {/* Sub-tab switcher */}
-      <div className="flex bg-pink-100/60 border border-pink-100/80 p-1 rounded-2xl text-xs font-bold">
+      <div className="flex bg-stone-200/70 p-1 rounded-2xl text-xs font-bold">
         <button
           onClick={() => setActiveTab('next')}
           className={`flex-1 py-2 rounded-xl transition-all flex items-center justify-center space-x-1.5 ${
-            activeTab === 'next' ? 'bg-white text-slate-900 shadow-sm' : 'text-stone-500 hover:text-rose-500'
+            activeTab === 'next' ? 'bg-white text-slate-900 shadow-sm' : 'text-stone-500 hover:text-stone-700'
           }`}
         >
-          <Sparkles className="w-3.5 h-3.5 text-rose-500" />
+          <Sparkles className="w-3.5 h-3.5 text-amber-500" />
           <span>What to Eat Next</span>
         </button>
 
         <button
           onClick={() => setActiveTab('swaps')}
           className={`flex-1 py-2 rounded-xl transition-all flex items-center justify-center space-x-1.5 ${
-            activeTab === 'swaps' ? 'bg-white text-slate-900 shadow-sm' : 'text-stone-500 hover:text-rose-500'
+            activeTab === 'swaps' ? 'bg-white text-slate-900 shadow-sm' : 'text-stone-500 hover:text-stone-700'
           }`}
         >
-          <ArrowLeftRight className="w-3.5 h-3.5 text-rose-500" />
+          <ArrowLeftRight className="w-3.5 h-3.5 text-[#D9381E]" />
           <span>Healthier Hawker Swaps</span>
         </button>
       </div>
@@ -100,14 +100,14 @@ export const RecommendationsView: React.FC<RecommendationsViewProps> = ({
       {activeTab === 'next' && (
         <div className="space-y-3">
           {/* Header Card */}
-          <div className="bg-gradient-to-br from-rose-500 via-pink-500 to-rose-400 rounded-3xl p-4 text-white shadow-float animate-fade-slide-up">
+          <div className="bg-gradient-to-br from-amber-500 to-[#D9381E] rounded-3xl p-4 text-white shadow-float">
             <span className="text-[10px] font-bold uppercase tracking-wider bg-white/25 px-2 py-0.5 rounded-full">
               Personalised Recommendation
             </span>
             <h2 className="text-base font-extrabold mt-1">
               Suggestions for {mealSlot.toUpperCase()}
             </h2>
-            <p className="text-xs text-rose-100 mt-1">
+            <p className="text-xs text-red-100 mt-1">
               You have <strong>{remainingCal} kcal</strong> and <strong>{remainingP}g protein</strong> remaining in today's budget.
             </p>
           </div>
@@ -121,12 +121,11 @@ export const RecommendationsView: React.FC<RecommendationsViewProps> = ({
             ) : recommendations.map((item, idx) => (
               <div
                 key={idx}
-                className="bg-white rounded-3xl p-4 border border-rose-100 shadow-soft space-y-3 hover:border-pink-300 card-hover transition-all animate-fade-slide-up"
-                style={{ animationDelay: `${idx * 80}ms` }}
+                className="bg-white rounded-3xl p-4 border border-stone-200/80 shadow-soft space-y-3 hover:border-[#D9381E] transition-all"
               >
                 <div className="flex items-start justify-between">
                   <div>
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-rose-500 bg-pink-50 px-2 py-0.5 rounded-md">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#D9381E] bg-red-50 px-2 py-0.5 rounded-md">
                       {item.dish.category}
                     </span>
                     <h3 className="font-extrabold text-sm text-slate-900 mt-1">
@@ -138,15 +137,15 @@ export const RecommendationsView: React.FC<RecommendationsViewProps> = ({
                   </div>
 
                   <div className="text-right">
-                    <span className="text-base font-black text-rose-500">
+                    <span className="text-base font-black text-[#D9381E]">
                       {item.dish.calories}
                     </span>
-                    <span className="text-[10px] text-rose-400 block -mt-1 font-bold">kcal</span>
+                    <span className="text-[10px] text-stone-400 block -mt-1 font-bold">kcal</span>
                   </div>
                 </div>
 
                 {/* Reasoning Quote */}
-                <div className="bg-rose-50/40 p-2.5 rounded-xl border border-rose-100/70 text-xs text-slate-700 font-medium leading-relaxed">
+                <div className="bg-stone-50 p-2.5 rounded-xl border border-stone-100 text-xs text-slate-700 font-medium leading-relaxed">
                   💡 {item.reasoning}
                 </div>
 
@@ -160,7 +159,7 @@ export const RecommendationsView: React.FC<RecommendationsViewProps> = ({
 
                   <button
                     onClick={() => onSelectDish(item.dish)}
-                    className="px-3 py-1 bg-gradient-to-r from-rose-500 to-pink-500 hover:opacity-95 text-white rounded-xl text-xs font-bold flex items-center space-x-1 shadow-sm press-anim"
+                    className="px-3 py-1 bg-[#D9381E] hover:bg-[#B91C1C] text-white rounded-xl text-xs font-bold flex items-center space-x-1 shadow-sm"
                   >
                     <Plus className="w-3.5 h-3.5" />
                     <span>Log Dish</span>
@@ -175,7 +174,7 @@ export const RecommendationsView: React.FC<RecommendationsViewProps> = ({
       {/* TAB B: HEALTHIER SWAPS */}
       {activeTab === 'swaps' && (
         <div className="space-y-3">
-          <div className="bg-white rounded-3xl p-4 border border-rose-100 shadow-soft animate-fade-slide-up">
+          <div className="bg-white rounded-3xl p-4 border border-stone-200 shadow-soft">
             <h3 className="text-sm font-extrabold text-slate-900">Hawker Smart Swaps</h3>
             <p className="text-xs text-stone-500 mt-0.5">
               Enjoy your favourite hawker dishes while effortlessly cutting 200–400 kcal and excessive sodium with these ordering secrets.
@@ -186,24 +185,23 @@ export const RecommendationsView: React.FC<RecommendationsViewProps> = ({
             {CLASSIC_SWAPS.map((swap, idx) => (
               <div
                 key={idx}
-                className="bg-white rounded-3xl p-4 border border-rose-100/80 shadow-soft space-y-2.5 animate-fade-slide-up card-hover"
-                style={{ animationDelay: `${idx * 60}ms` }}
+                className="bg-white rounded-3xl p-4 border border-stone-200 shadow-soft space-y-2.5"
               >
                 {/* Before / After */}
                 <div className="space-y-1.5 text-xs">
-                  <div className="flex items-center text-rose-800 bg-rose-50 p-2 rounded-xl border border-rose-100">
+                  <div className="flex items-center text-rose-800 bg-rose-50 p-2 rounded-xl">
                     <span className="w-4 font-bold text-rose-500 mr-1.5">✕</span>
                     <span className="font-semibold">{swap.original}</span>
                   </div>
 
-                  <div className="flex items-center text-emerald-900 bg-emerald-50 p-2 rounded-xl font-bold border border-emerald-100">
+                  <div className="flex items-center text-emerald-900 bg-emerald-50 p-2 rounded-xl font-bold">
                     <span className="w-4 text-emerald-600 mr-1.5">✓</span>
                     <span>{swap.swap}</span>
                   </div>
                 </div>
 
                 <div className="flex items-center justify-between text-xs pt-1">
-                  <span className="font-extrabold text-rose-500 text-[11px] bg-pink-50 px-2 py-0.5 rounded-lg border border-pink-100">
+                  <span className="font-extrabold text-[#D9381E] text-[11px] bg-red-50 px-2 py-0.5 rounded-lg">
                     {swap.savings}
                   </span>
                 </div>
