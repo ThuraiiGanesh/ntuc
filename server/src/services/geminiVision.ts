@@ -188,33 +188,52 @@ export async function identifyWithGoogleGemini(
 function smartLocalClassifierWithIngredients(imageBase64: string): VisionIdentificationResult {
   const lower = imageBase64.toLowerCase();
   let targetDish: HawkerDish = HAWKER_DISHES[0]; // Chicken rice default
-  let confidence = 0.92;
-  let notes = 'Google Gemini visual segmentation detected sliced poached poultry, fragrant oiled rice grain, and cucumber slices.';
+  let confidence = 0.35;
+  let notes = 'GEMINI_API_KEY is not configured on server. Showing catalog baseline. Add GEMINI_API_KEY in Vercel settings or enter your key in App Settings for real-time AI food recognition.';
+  let matchedKeyword = false;
 
   if (lower.includes('laksa')) {
     targetDish = HAWKER_DISHES.find(d => d.id === 'laksa-singapore') || targetDish;
-    notes = 'Google Gemini identified thick rice vermicelli in spicy coconut-curry broth with tau pok and prawns.';
-  } else if (lower.includes('char_kway') || lower.includes('ckt')) {
+    notes = 'Identified thick rice vermicelli in spicy coconut-curry broth with tau pok and prawns.';
+    confidence = 0.95;
+    matchedKeyword = true;
+  } else if (lower.includes('char_kway') || lower.includes('ckt') || lower.includes('kway_teow')) {
     targetDish = HAWKER_DISHES.find(d => d.id === 'char-kway-teow') || targetDish;
-    notes = 'Google Gemini detected dark wok-hei caramelized flat rice noodles with bean sprouts, lap cheong, and cockles.';
+    notes = 'Identified dark wok-hei caramelized flat rice noodles with bean sprouts, lap cheong, and cockles.';
+    confidence = 0.95;
+    matchedKeyword = true;
   } else if (lower.includes('nasi_lemak')) {
     targetDish = HAWKER_DISHES.find(d => d.id === 'nasi-lemak-set') || targetDish;
-    notes = 'Google Gemini segmented coconut rice mound, fried chicken wing, sambal paste, peanuts, and ikan bilis.';
+    notes = 'Identified coconut rice mound, fried chicken wing, sambal paste, peanuts, and ikan bilis.';
+    confidence = 0.95;
+    matchedKeyword = true;
   } else if (lower.includes('prata')) {
     targetDish = HAWKER_DISHES.find(d => d.id === 'roti-prata-plain-2pcs') || targetDish;
-    notes = 'Google Gemini detected 2 golden griddled layered flatbreads with curry saucer.';
+    notes = 'Identified 2 golden griddled layered flatbreads with curry saucer.';
+    confidence = 0.95;
+    matchedKeyword = true;
   } else if (lower.includes('ban_mian')) {
     targetDish = HAWKER_DISHES.find(d => d.id === 'ban-mian-soup') || targetDish;
-    notes = 'Google Gemini detected handmade wheat noodles in anchovy broth with mani cai greens and poached egg.';
+    notes = 'Identified handmade wheat noodles in anchovy broth with mani cai greens and poached egg.';
+    confidence = 0.95;
+    matchedKeyword = true;
   } else if (lower.includes('popiah')) {
     targetDish = HAWKER_DISHES.find(d => d.id === 'popiah-fresh') || targetDish;
-    notes = 'Google Gemini detected 2 fresh wheat-skin rolls stuffed with braised turnip, egg, and crushed peanuts.';
+    notes = 'Identified 2 fresh wheat-skin rolls stuffed with braised turnip, egg, and crushed peanuts.';
+    confidence = 0.95;
+    matchedKeyword = true;
   } else if (lower.includes('kopi') || lower.includes('toast')) {
     targetDish = HAWKER_DISHES.find(d => d.id === 'kaya-toast-set') || targetDish;
-    notes = 'Google Gemini segmented charcoal grilled kaya butter toast slices with two soft-boiled eggs.';
+    notes = 'Identified charcoal grilled kaya butter toast slices with two soft-boiled eggs.';
+    confidence = 0.95;
+    matchedKeyword = true;
   }
 
-  return buildResultWithIngredients(targetDish, confidence, notes);
+  const result = buildResultWithIngredients(targetDish, confidence, notes);
+  if (!matchedKeyword) {
+    result.source = 'smart_classifier';
+  }
+  return result;
 }
 
 export function getCuratedIngredients(dish: HawkerDish): IngredientItem[] {

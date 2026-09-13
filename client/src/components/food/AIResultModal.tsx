@@ -268,6 +268,27 @@ export const AIResultModal: React.FC<AIResultModalProps> = ({
               </div>
             </div>
 
+            {/* Missing API Key Warning if running in local fallback */}
+            {result.source === 'smart_classifier' && (
+              <div className="mt-3 bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-900 flex items-start gap-2.5 animate-fade-in">
+                <AlertCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                <div className="flex-1">
+                  <p className="font-extrabold text-amber-950">AI Vision Key Not Detected</p>
+                  <p className="text-[11px] text-amber-800 mt-0.5 leading-snug">
+                    To analyze custom food photos (like Prata, Laksa, etc.) with real Google Gemini AI Vision, add <code className="bg-amber-100 text-amber-900 px-1 py-0.5 rounded font-mono font-bold">GEMINI_API_KEY</code> to your Vercel Environment Variables, or enter your key in App Settings.
+                  </p>
+                  <div className="mt-2 flex items-center gap-2">
+                    <button
+                      onClick={onOpenManualSearch}
+                      className="bg-[#D9381E] text-white px-2.5 py-1 rounded-lg text-[11px] font-bold hover:bg-[#b82e18] transition-colors shadow-sm"
+                    >
+                      Search & Select Dish (e.g. Roti Prata)
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* AI Visual Note */}
             {result.ai_notes && (
               <p className="text-[11px] text-stone-500 italic mt-2.5 bg-stone-50 p-2 rounded-xl border border-stone-100">

@@ -32,6 +32,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   const [healthConditions, setHealthConditions] = useState<string[]>(profile.health_conditions || []);
   const [dietary, setDietary] = useState<string[]>(profile.dietary_preferences || ['no_restriction']);
   const [apiUrl, setApiUrl] = useState(() => (typeof window !== 'undefined' ? localStorage.getItem('hawker_api_url') || '' : ''));
+  const [geminiKey, setGeminiKey] = useState(() => (typeof window !== 'undefined' ? localStorage.getItem('hawker_gemini_api_key') || '' : ''));
   const [saving, setSaving] = useState(false);
 
   const toggleHealth = (cond: string) => {
@@ -62,6 +63,12 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           localStorage.setItem('hawker_api_url', apiUrl.trim());
         } else {
           localStorage.removeItem('hawker_api_url');
+        }
+
+        if (geminiKey.trim()) {
+          localStorage.setItem('hawker_gemini_api_key', geminiKey.trim());
+        } else {
+          localStorage.removeItem('hawker_gemini_api_key');
         }
       }
 
@@ -286,6 +293,29 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               value={apiUrl}
               onChange={e => setApiUrl(e.target.value)}
               className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-mono text-slate-800 placeholder:text-stone-400 focus:outline-none focus:border-[#D9381E]"
+            />
+          </div>
+
+          {/* Google Gemini AI Vision Key */}
+          <div className="bg-gradient-to-br from-blue-50/60 via-white to-indigo-50/60 p-4 rounded-2xl border border-blue-200/80 space-y-2.5 shadow-soft">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-1.5">
+                <Sparkles className="w-4 h-4 text-blue-600" />
+                <h4 className="text-xs font-black text-slate-900 uppercase tracking-wider">Google Gemini Vision Key</h4>
+              </div>
+              <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 border border-blue-200">
+                AI Vision
+              </span>
+            </div>
+            <p className="text-[11px] text-stone-600 leading-relaxed">
+              Required to recognize live food photos (Prata, Laksa, etc.) with real Google Gemini 2.5 Flash Vision. You can also set <code className="bg-blue-100 text-blue-900 px-1 py-0.5 rounded text-[10px] font-mono font-bold">GEMINI_API_KEY</code> in Vercel. Get a free key at <a href="https://aistudio.google.com/" target="_blank" rel="noreferrer" className="text-blue-600 font-bold underline">aistudio.google.com</a>.
+            </p>
+            <input
+              type="password"
+              placeholder="Paste your AIzaSy... key here"
+              value={geminiKey}
+              onChange={e => setGeminiKey(e.target.value)}
+              className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-mono text-slate-800 placeholder:text-stone-400 focus:outline-none focus:border-blue-500 bg-white"
             />
           </div>
         </div>

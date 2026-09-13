@@ -844,13 +844,15 @@ export const api = {
     imageBase64?: string;
     sampleDishId?: string;
     mimeType?: string;
+    customApiKey?: string;
   }): Promise<VisionResult> {
+    const key = params.customApiKey || (typeof window !== 'undefined' ? localStorage.getItem('hawker_gemini_api_key') || undefined : undefined);
     try {
       const res = await safeFetch(`${getBaseUrl()}/vision/identify`, {
         method: 'POST',
         headers: getAuthHeaders(),
-        body: JSON.stringify(params),
-        timeoutMs: 20000
+        body: JSON.stringify({ ...params, customApiKey: key }),
+        timeoutMs: 25000
       });
       const data = await safeJson<any>(res);
       if (res && res.ok && data) return data;
@@ -865,11 +867,13 @@ export const api = {
       .filter(d => d.id !== targetDish.id && (d.category === targetDish.category || d.stall_type === targetDish.stall_type))
       .slice(0, 3);
 
+    const isSample = Boolean(params.sampleDishId);
+
     return {
       dish_id: targetDish.id,
       dish_name: targetDish.name_en,
       name_local: targetDish.name_local,
-      confidence: 0.95,
+      confidence: isSample ? 0.95 : 0.40,
       category: targetDish.category,
       estimated_portion_size: targetDish.portion_default,
       portion_multiplier: 1.0,
@@ -893,7 +897,9 @@ export const api = {
         confidence: Number((0.85 - i * 0.08).toFixed(2)),
         calories: d.calories
       })),
-      ai_notes: `Recognized with Singapore Hawker Intelligence. Decomposed into ${curatedIngredients.length} authentic ingredients.`,
+      ai_notes: isSample
+        ? `Recognized with Singapore Hawker Intelligence. Decomposed into ${curatedIngredients.length} authentic ingredients.`
+        : 'AI Vision key not configured. Set GEMINI_API_KEY in Vercel or Settings to analyze custom photos with Google Gemini Vision.',
       source: 'smart_classifier'
     };
   },
