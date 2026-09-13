@@ -2,37 +2,57 @@ import { Capacitor } from '@capacitor/core';
 import { DailySummary, FoodLogEntry, HawkerDish, NextRecommendation, UserProfile, VisionResult } from '../types';
 import { HAWKER_DISHES } from '../data/hawkerData';
 
-export function getApiBaseUrl(): string {
-  const custom = typeof window !== 'undefined' ? localStorage.getItem('hawker_api_url') : null;
-  if (custom) return custom.replace(/\/+$/, '');
-
-  const envUrl = (import.meta as any).env?.VITE_API_BASE_URL as string;
-  if (envUrl) return envUrl.replace(/\/+$/, '');
-
-  if (Capacitor.isNativePlatform()) {
-    return 'http://10.6.12.150:5000/api';
-  }
-
-  return (import.meta as any).env?.DEV ? 'http://localhost:5000/api' : '/api';
+// ─── Safe AbortSignal timeout polyfill ──────────────────────────────────────
+// AbortSignal.timeout is NOT available in older Android WebViews.
+// We use a plain AbortController + setTimeout fallback instead.
+function makeAbortSignal(ms: number): AbortSignal {
+  try {
+    if (typeof AbortSignal !== 'undefined' && typeof AbortSignal.timeout === 'function') {
+      return AbortSignal.timeout(ms);
+    }
+  } catch {}
+  const ctrl = new AbortController();
+  setTimeout(() => ctrl.abort(), ms);
+  return ctrl.signal;
 }
 
-const API_BASE = {
-  toString() {
-    return getApiBaseUrl();
-  }
-};
+// ─── API Base URL ────────────────────────────────────────────────────────────
+export function getApiBaseUrl(): string {
+  try {
+    const custom = typeof window !== 'undefined' ? localStorage.getItem('hawker_api_url') : null;
+    if (custom && custom.trim()) return custom.trim().replace(/\/+$/, '');
 
+    const envUrl = (import.meta as any).env?.VITE_API_BASE_URL as string;
+    if (envUrl && envUrl.trim()) return envUrl.trim().replace(/\/+$/, '');
+
+    if (Capacitor.isNativePlatform()) {
+      // On Android emulator: 10.0.2.2, on real device: your LAN IP
+      return 'http://10.6.12.150:5000/api';
+    }
+  } catch {}
+
+  try {
+    return (import.meta as any).env?.DEV ? 'http://localhost:5000/api' : '/api';
+  } catch {}
+  return '/api';
+}
+
+// Dynamic getter — re-reads localStorage on every call
+function getBaseUrl(): string {
+  return getApiBaseUrl();
+}
+
+// ─── Auth headers ────────────────────────────────────────────────────────────
 function getAuthHeaders(): Record<string, string> {
-  const headers: Record<string, string> = {
-    'Content-Type': 'application/json'
-  };
-  const token = typeof window !== 'undefined' ? localStorage.getItem('hawker_auth_token') : null;
-  if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
-  }
+  const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+  try {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('hawker_auth_token') : null;
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+  } catch {}
   return headers;
 }
 
+// ─── Local storage helpers ───────────────────────────────────────────────────
 const DEFAULT_PROFILE: UserProfile = {
   name: 'Hawker Foodie',
   onboarded: true,
@@ -57,9 +77,19 @@ const DEFAULT_PROFILE: UserProfile = {
   water_target_ml: 2500
 };
 
+function lsGet(key: string): string | null {
+  try { return typeof window !== 'undefined' ? localStorage.getItem(key) : null; } catch { return null; }
+}
+function lsSet(key: string, value: string): void {
+  try { if (typeof window !== 'undefined') localStorage.setItem(key, value); } catch {}
+}
+function lsRemove(key: string): void {
+  try { if (typeof window !== 'undefined') localStorage.removeItem(key); } catch {}
+}
+
 function getLocalStoredUser(): { user: { id: string; name: string; email: string }; profile: UserProfile } {
   try {
-    const raw = typeof window !== 'undefined' ? localStorage.getItem('hawker_local_user') : null;
+    const raw = lsGet('hawker_local_user');
     if (raw) return JSON.parse(raw);
   } catch {}
   return {
@@ -69,58 +99,83 @@ function getLocalStoredUser(): { user: { id: string; name: string; email: string
 }
 
 function saveLocalUser(user: { id: string; name: string; email: string }, profile: UserProfile) {
-  try {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('hawker_local_user', JSON.stringify({ user, profile }));
-    }
-  } catch {}
+  try { lsSet('hawker_local_user', JSON.stringify({ user, profile })); } catch {}
 }
 
 function getStoredLogs(date: string): FoodLogEntry[] {
   try {
-    const raw = typeof window !== 'undefined' ? localStorage.getItem(`hawker_logs_${date}`) : null;
+    const raw = lsGet(`hawker_logs_${date}`);
     if (raw) return JSON.parse(raw);
   } catch {}
   return [];
 }
 
 function saveStoredLogs(date: string, logs: FoodLogEntry[]) {
-  try {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem(`hawker_logs_${date}`, JSON.stringify(logs));
-    }
-  } catch {}
+  try { lsSet(`hawker_logs_${date}`, JSON.stringify(logs)); } catch {}
 }
 
+// ─── Safe fetch & JSON wrappers ──────────────────────────────────────────────
+// Wraps fetch with timeout + catches ALL errors (network, abort, etc.)
+async function safeFetch(url: string, options: RequestInit & { timeoutMs?: number } = {}): Promise<Response | null> {
+  const { timeoutMs = 5000, ...fetchOpts } = options;
+  try {
+    const signal = makeAbortSignal(timeoutMs);
+    const res = await fetch(url, { ...fetchOpts, signal });
+    return res;
+  } catch {
+    return null;
+  }
+}
+
+// Safely parses response JSON, avoiding "Unexpected end of JSON input" errors
+async function safeJson<T = any>(res: Response | null): Promise<T | null> {
+  if (!res) return null;
+  try {
+    const text = await res.text();
+    if (!text || !text.trim()) return null;
+    return JSON.parse(text) as T;
+  } catch {
+    return null;
+  }
+}
+
+// ─── API ─────────────────────────────────────────────────────────────────────
 export const api = {
-  // Authentication
+  // ── Authentication ────────────────────────────────────────────────────────
   async register(params: { name: string; email: string; password: string }): Promise<{
     token: string;
     user: { id: string; name: string; email: string };
     profile: UserProfile;
   }> {
     try {
-      const res = await fetch(`${API_BASE}/auth/register`, {
+      const res = await safeFetch(`${getBaseUrl()}/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(params),
-        signal: AbortSignal.timeout(3500)
+        timeoutMs: 6000
       });
-      if (res.ok) {
-        const data = await res.json();
-        if (data.token) localStorage.setItem('hawker_auth_token', data.token);
-        saveLocalUser(data.user, data.profile);
-        return data;
+      if (res) {
+        const data = await safeJson<any>(res);
+        if (res.ok && data && data.token && data.user) {
+          lsSet('hawker_auth_token', data.token);
+          saveLocalUser(data.user, data.profile || DEFAULT_PROFILE);
+          return data;
+        }
+        if (!res.ok && data && data.error) {
+          throw new Error(data.error);
+        }
       }
-    } catch (err) {
-      console.warn('Backend unavailable, creating local device account:', err);
+    } catch (err: any) {
+      if (err?.message && !err.message.includes('fetch') && !err.message.includes('JSON')) {
+        throw err;
+      }
     }
 
-    // Offline / Local Device Account (Never fails)
+    // Offline / local device account fallback
     const user = { id: 'local-' + Date.now(), name: params.name, email: params.email };
     const profile: UserProfile = { ...DEFAULT_PROFILE, name: params.name };
     saveLocalUser(user, profile);
-    localStorage.setItem('hawker_auth_token', 'local-token-' + Date.now());
+    lsSet('hawker_auth_token', 'local-token-' + Date.now());
     return { token: 'local-token', user, profile };
   },
 
@@ -130,26 +185,33 @@ export const api = {
     profile: UserProfile;
   }> {
     try {
-      const res = await fetch(`${API_BASE}/auth/login`, {
+      const res = await safeFetch(`${getBaseUrl()}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(params),
-        signal: AbortSignal.timeout(3500)
+        timeoutMs: 6000
       });
-      if (res.ok) {
-        const data = await res.json();
-        if (data.token) localStorage.setItem('hawker_auth_token', data.token);
-        saveLocalUser(data.user, data.profile);
-        return data;
+      if (res) {
+        const data = await safeJson<any>(res);
+        if (res.ok && data && data.token && data.user) {
+          lsSet('hawker_auth_token', data.token);
+          saveLocalUser(data.user, data.profile || DEFAULT_PROFILE);
+          return data;
+        }
+        if (!res.ok && data && data.error) {
+          throw new Error(data.error);
+        }
       }
-    } catch (err) {
-      console.warn('Backend unavailable, logging into local device profile:', err);
+    } catch (err: any) {
+      if (err?.message && !err.message.includes('fetch') && !err.message.includes('JSON')) {
+        throw err;
+      }
     }
 
-    // Offline / Local Fallback
+    // Offline / local fallback
     const stored = getLocalStoredUser();
     const user = { ...stored.user, email: params.email || stored.user.email };
-    localStorage.setItem('hawker_auth_token', 'local-token-' + Date.now());
+    lsSet('hawker_auth_token', 'local-token-' + Date.now());
     return { token: 'local-token', user, profile: stored.profile };
   },
 
@@ -158,30 +220,27 @@ export const api = {
     user: { id: string; name: string; email: string } | null;
     profile: UserProfile;
   }> {
-    const token = typeof window !== 'undefined' ? localStorage.getItem('hawker_auth_token') : null;
-    if (!token) {
-      return { authenticated: false, user: null, profile: DEFAULT_PROFILE };
-    }
+    const token = lsGet('hawker_auth_token');
+    if (!token) return { authenticated: false, user: null, profile: DEFAULT_PROFILE };
+
     try {
-      const res = await fetch(`${API_BASE}/auth/me`, {
+      const res = await safeFetch(`${getBaseUrl()}/auth/me`, {
         headers: getAuthHeaders(),
-        signal: AbortSignal.timeout(3000)
+        timeoutMs: 4000
       });
-      if (res.ok) {
-        return await res.json();
-      }
-    } catch (err) {
-      console.warn('Auth check offline, loading local session:', err);
-    }
+      const data = await safeJson<any>(res);
+      if (res && res.ok && data) return data;
+    } catch {}
+
     const stored = getLocalStoredUser();
     return { authenticated: true, user: stored.user, profile: stored.profile };
   },
 
   logout(): void {
-    localStorage.removeItem('hawker_auth_token');
+    lsRemove('hawker_auth_token');
   },
 
-  // Food catalog
+  // ── Food catalog ──────────────────────────────────────────────────────────
   async getDishes(params?: { query?: string; category?: string; diet?: string }): Promise<HawkerDish[]> {
     const queryParts: string[] = [];
     if (params?.query) queryParts.push(`query=${encodeURIComponent(params.query)}`);
@@ -189,17 +248,14 @@ export const api = {
     if (params?.diet) queryParts.push(`diet=${encodeURIComponent(params.diet)}`);
 
     try {
-      const url = `${API_BASE}/food/dishes${queryParts.length ? '?' + queryParts.join('&') : ''}`;
-      const res = await fetch(url, { headers: getAuthHeaders(), signal: AbortSignal.timeout(3000) });
-      if (res.ok) {
-        const data = await res.json();
-        if (data.dishes && data.dishes.length > 0) return data.dishes;
+      const url = `${getBaseUrl()}/food/dishes${queryParts.length ? '?' + queryParts.join('&') : ''}`;
+      const res = await safeFetch(url, { headers: getAuthHeaders(), timeoutMs: 4000 });
+      const data = await safeJson<any>(res);
+      if (res && res.ok && data && data.dishes && data.dishes.length > 0) {
+        return data.dishes;
       }
-    } catch (err) {
-      console.warn('API dishes unreachable, using bundled 80+ authentic catalog:', err);
-    }
+    } catch {}
 
-    // Local instant catalog search over 80+ dishes
     let list = [...HAWKER_DISHES];
     if (params?.category && params.category !== 'All') {
       list = list.filter(d => d.category.toLowerCase() === params.category?.toLowerCase());
@@ -221,31 +277,34 @@ export const api = {
 
   async getDish(id: string): Promise<HawkerDish> {
     try {
-      const res = await fetch(`${API_BASE}/food/dishes/${id}`, { headers: getAuthHeaders(), signal: AbortSignal.timeout(3000) });
-      if (res.ok) return await res.json();
-    } catch (err) {}
+      const res = await safeFetch(`${getBaseUrl()}/food/dishes/${id}`, { headers: getAuthHeaders(), timeoutMs: 4000 });
+      const data = await safeJson<any>(res);
+      if (res && res.ok && data) return data;
+    } catch {}
     return HAWKER_DISHES.find(d => d.id === id) || HAWKER_DISHES[0];
   },
 
-  // User Profile
+  // ── User Profile ──────────────────────────────────────────────────────────
   async getProfile(): Promise<UserProfile> {
     try {
-      const res = await fetch(`${API_BASE}/user/profile`, { headers: getAuthHeaders(), signal: AbortSignal.timeout(3000) });
-      if (res.ok) return await res.json();
-    } catch (err) {}
+      const res = await safeFetch(`${getBaseUrl()}/user/profile`, { headers: getAuthHeaders(), timeoutMs: 4000 });
+      const data = await safeJson<any>(res);
+      if (res && res.ok && data) return data;
+    } catch {}
     return getLocalStoredUser().profile;
   },
 
   async updateProfile(profile: Partial<UserProfile>): Promise<UserProfile> {
     try {
-      const res = await fetch(`${API_BASE}/user/profile`, {
+      const res = await safeFetch(`${getBaseUrl()}/user/profile`, {
         method: 'POST',
         headers: getAuthHeaders(),
         body: JSON.stringify(profile),
-        signal: AbortSignal.timeout(3000)
+        timeoutMs: 4000
       });
-      if (res.ok) return await res.json();
-    } catch (err) {}
+      const data = await safeJson<any>(res);
+      if (res && res.ok && data) return data;
+    } catch {}
 
     const stored = getLocalStoredUser();
     const updated: UserProfile = { ...stored.profile, ...profile };
@@ -255,34 +314,32 @@ export const api = {
 
   async resetData(): Promise<any> {
     try {
-      await fetch(`${API_BASE}/user/reset`, {
+      await safeFetch(`${getBaseUrl()}/user/reset`, {
         method: 'POST',
         headers: getAuthHeaders(),
-        signal: AbortSignal.timeout(3000)
+        timeoutMs: 4000
       });
-    } catch (err) {}
+    } catch {}
     return { success: true };
   },
 
-  // Vision Identification
+  // ── Vision Identification ─────────────────────────────────────────────────
   async identifyFood(params: {
     imageBase64?: string;
     sampleDishId?: string;
     mimeType?: string;
   }): Promise<VisionResult> {
     try {
-      const res = await fetch(`${API_BASE}/vision/identify`, {
+      const res = await safeFetch(`${getBaseUrl()}/vision/identify`, {
         method: 'POST',
         headers: getAuthHeaders(),
         body: JSON.stringify(params),
-        signal: AbortSignal.timeout(8000)
+        timeoutMs: 10000
       });
-      if (res.ok) return await res.json();
-    } catch (err) {
-      console.warn('Cloud Vision unreachable, using smart device recognition:', err);
-    }
+      const data = await safeJson<any>(res);
+      if (res && res.ok && data) return data;
+    } catch {}
 
-    // Smart Local Recognition Fallback
     const targetDish = params.sampleDishId
       ? (HAWKER_DISHES.find(d => d.id === params.sampleDishId) || HAWKER_DISHES[0])
       : HAWKER_DISHES[0];
@@ -326,14 +383,15 @@ export const api = {
 
   async sendTrainingFeedback(feedback: any): Promise<any> {
     try {
-      const res = await fetch(`${API_BASE}/training/feedback`, {
+      const res = await safeFetch(`${getBaseUrl()}/training/feedback`, {
         method: 'POST',
         headers: getAuthHeaders(),
         body: JSON.stringify(feedback),
-        signal: AbortSignal.timeout(3000)
+        timeoutMs: 4000
       });
-      return res.json();
-    } catch (err) {}
+      const data = await safeJson<any>(res);
+      if (res && res.ok && data) return data;
+    } catch {}
     return { success: true };
   },
 
@@ -345,9 +403,10 @@ export const api = {
     topLearnedDishes: Array<{ dish_name: string; count: number }>;
   }> {
     try {
-      const res = await fetch(`${API_BASE}/training/stats`, { headers: getAuthHeaders(), signal: AbortSignal.timeout(3000) });
-      if (res.ok) return await res.json();
-    } catch (err) {}
+      const res = await safeFetch(`${getBaseUrl()}/training/stats`, { headers: getAuthHeaders(), timeoutMs: 4000 });
+      const data = await safeJson<any>(res);
+      if (res && res.ok && data) return data;
+    } catch {}
     return {
       totalSamples: 128,
       verifiedSamples: 114,
@@ -361,20 +420,18 @@ export const api = {
     };
   },
 
-  // Daily Logs & Diary
+  // ── Daily Logs & Diary ────────────────────────────────────────────────────
   async getDailyLogs(date?: string): Promise<DailySummary> {
     const d = date || new Date().toISOString().split('T')[0];
     try {
-      const res = await fetch(`${API_BASE}/logs/daily?date=${d}`, {
+      const res = await safeFetch(`${getBaseUrl()}/logs/daily?date=${d}`, {
         headers: getAuthHeaders(),
-        signal: AbortSignal.timeout(3000)
+        timeoutMs: 4000
       });
-      if (res.ok) return await res.json();
-    } catch (err) {
-      console.warn('Daily logs server offline, using local storage:', err);
-    }
+      const data = await safeJson<any>(res);
+      if (res && res.ok && data) return data;
+    } catch {}
 
-    // Local Storage Log computation
     const entries = getStoredLogs(d);
     const totals = entries.reduce(
       (acc, e) => {
@@ -409,30 +466,22 @@ export const api = {
       sugar_g: Math.max(0, targets.target_sugar_g - totals.sugar_g)
     };
 
-    const water_ml = Number(localStorage.getItem(`hawker_water_${d}`) || 750);
+    const water_ml = Number(lsGet(`hawker_water_${d}`) || 750);
 
-    return {
-      date: d,
-      entries,
-      water_ml,
-      totals,
-      targets,
-      remaining
-    };
+    return { date: d, entries, water_ml, totals, targets, remaining };
   },
 
   async addLogEntry(entry: Omit<FoodLogEntry, 'id' | 'created_at'>): Promise<FoodLogEntry> {
     try {
-      const res = await fetch(`${API_BASE}/logs/daily`, {
+      const res = await safeFetch(`${getBaseUrl()}/logs/daily`, {
         method: 'POST',
         headers: getAuthHeaders(),
         body: JSON.stringify(entry),
-        signal: AbortSignal.timeout(3000)
+        timeoutMs: 4000
       });
-      if (res.ok) return await res.json();
-    } catch (err) {
-      console.warn('addLogEntry saving locally:', err);
-    }
+      const data = await safeJson<any>(res);
+      if (res && res.ok && data) return data;
+    } catch {}
 
     const d = entry.date || new Date().toISOString().split('T')[0];
     const newEntry: FoodLogEntry = {
@@ -448,14 +497,15 @@ export const api = {
 
   async updateLogEntry(id: string, updates: Partial<FoodLogEntry>): Promise<FoodLogEntry> {
     try {
-      const res = await fetch(`${API_BASE}/logs/daily/${id}`, {
+      const res = await safeFetch(`${getBaseUrl()}/logs/daily/${id}`, {
         method: 'PUT',
         headers: getAuthHeaders(),
         body: JSON.stringify(updates),
-        signal: AbortSignal.timeout(3000)
+        timeoutMs: 4000
       });
-      if (res.ok) return await res.json();
-    } catch (err) {}
+      const data = await safeJson<any>(res);
+      if (res && res.ok && data) return data;
+    } catch {}
 
     const d = new Date().toISOString().split('T')[0];
     const existing = getStoredLogs(d);
@@ -466,60 +516,63 @@ export const api = {
 
   async deleteLogEntry(id: string): Promise<void> {
     try {
-      await fetch(`${API_BASE}/logs/daily/${id}`, {
+      await safeFetch(`${getBaseUrl()}/logs/daily/${id}`, {
         method: 'DELETE',
         headers: getAuthHeaders(),
-        signal: AbortSignal.timeout(3000)
+        timeoutMs: 4000
       });
-    } catch (err) {}
+    } catch {}
 
     const d = new Date().toISOString().split('T')[0];
     const existing = getStoredLogs(d);
     saveStoredLogs(d, existing.filter(e => e.id !== id));
   },
 
-  // Water Tracker
+  // ── Water Tracker ─────────────────────────────────────────────────────────
   async logWater(amount_ml: number = 250, date?: string): Promise<{ date: string; water_ml: number }> {
     const d = date || new Date().toISOString().split('T')[0];
     try {
-      const res = await fetch(`${API_BASE}/logs/water`, {
+      const res = await safeFetch(`${getBaseUrl()}/logs/water`, {
         method: 'POST',
         headers: getAuthHeaders(),
         body: JSON.stringify({ amount_ml, date: d }),
-        signal: AbortSignal.timeout(3000)
+        timeoutMs: 4000
       });
-      if (res.ok) return await res.json();
-    } catch (err) {}
+      const data = await safeJson<any>(res);
+      if (res && res.ok && data) return data;
+    } catch {}
 
     const key = `hawker_water_${d}`;
-    const current = Number(localStorage.getItem(key) || 0) + amount_ml;
-    localStorage.setItem(key, String(current));
+    const current = Number(lsGet(key) || 0) + amount_ml;
+    lsSet(key, String(current));
     return { date: d, water_ml: current };
   },
 
-  // Weekly Stats
+  // ── Weekly Stats ──────────────────────────────────────────────────────────
   async getWeeklyStats(): Promise<any> {
     try {
-      const res = await fetch(`${API_BASE}/logs/weekly`, { headers: getAuthHeaders(), signal: AbortSignal.timeout(3000) });
-      if (res.ok) return await res.json();
-    } catch (err) {}
+      const res = await safeFetch(`${getBaseUrl()}/logs/weekly`, { headers: getAuthHeaders(), timeoutMs: 4000 });
+      const data = await safeJson<any>(res);
+      if (res && res.ok && data) return data;
+    } catch {}
     return { history: [], averages: { calories: 1750, protein_g: 95 } };
   },
 
   async logWeight(weight_kg: number, date?: string): Promise<any> {
     try {
-      const res = await fetch(`${API_BASE}/logs/weight`, {
+      const res = await safeFetch(`${getBaseUrl()}/logs/weight`, {
         method: 'POST',
         headers: getAuthHeaders(),
         body: JSON.stringify({ weight_kg, date }),
-        signal: AbortSignal.timeout(3000)
+        timeoutMs: 4000
       });
-      if (res.ok) return await res.json();
-    } catch (err) {}
+      const data = await safeJson<any>(res);
+      if (res && res.ok && data) return data;
+    } catch {}
     return { success: true };
   },
 
-  // Recommendations
+  // ── Recommendations ───────────────────────────────────────────────────────
   async getNextRecommendations(date?: string, meal_time?: string): Promise<{
     mealSlot: string;
     remainingBudget: any;
@@ -529,14 +582,13 @@ export const api = {
     if (date) q.push(`date=${date}`);
     if (meal_time) q.push(`meal_time=${meal_time}`);
     try {
-      const res = await fetch(`${API_BASE}/recommend/next${q.length ? '?' + q.join('&') : ''}`, {
+      const res = await safeFetch(`${getBaseUrl()}/recommend/next${q.length ? '?' + q.join('&') : ''}`, {
         headers: getAuthHeaders(),
-        signal: AbortSignal.timeout(3000)
+        timeoutMs: 4000
       });
-      if (res.ok) return await res.json();
-    } catch (err) {
-      console.warn('getNextRecommendations offline fallback:', err);
-    }
+      const data = await safeJson<any>(res);
+      if (res && res.ok && data) return data;
+    } catch {}
 
     const chickenRice = HAWKER_DISHES.find(d => d.id === 'chicken-rice-steamed') || HAWKER_DISHES[0];
     const fishSoup = HAWKER_DISHES.find(d => d.id === 'fish-soup-bee-hoon-clear') || HAWKER_DISHES[1];
@@ -567,18 +619,20 @@ export const api = {
 
   async getDishSwaps(dishId: string): Promise<any> {
     try {
-      const res = await fetch(`${API_BASE}/recommend/swaps?dish_id=${dishId}`, { headers: getAuthHeaders(), signal: AbortSignal.timeout(3000) });
-      if (res.ok) return await res.json();
-    } catch (err) {}
+      const res = await safeFetch(`${getBaseUrl()}/recommend/swaps?dish_id=${dishId}`, { headers: getAuthHeaders(), timeoutMs: 4000 });
+      const data = await safeJson<any>(res);
+      if (res && res.ok && data) return data;
+    } catch {}
     return { healthierAlternatives: HAWKER_DISHES.slice(1, 4) };
   },
 
-  // Meal Plans
+  // ── Meal Plans ────────────────────────────────────────────────────────────
   async getDailyPlan(): Promise<any> {
     try {
-      const res = await fetch(`${API_BASE}/plans/daily`, { headers: getAuthHeaders(), signal: AbortSignal.timeout(3000) });
-      if (res.ok) return await res.json();
-    } catch (err) {}
+      const res = await safeFetch(`${getBaseUrl()}/plans/daily`, { headers: getAuthHeaders(), timeoutMs: 4000 });
+      const data = await safeJson<any>(res);
+      if (res && res.ok && data) return data.plan || data;
+    } catch {}
 
     return {
       breakfast: HAWKER_DISHES.find(d => d.id === 'kaya-toast-set') || HAWKER_DISHES[0],
@@ -593,9 +647,13 @@ export const api = {
 
   async getWeeklyPlan(): Promise<any> {
     try {
-      const res = await fetch(`${API_BASE}/plans/weekly`, { headers: getAuthHeaders(), signal: AbortSignal.timeout(3000) });
-      if (res.ok) return await res.json();
-    } catch (err) {}
+      const res = await safeFetch(`${getBaseUrl()}/plans/weekly`, { headers: getAuthHeaders(), timeoutMs: 4000 });
+      const data = await safeJson<any>(res);
+      if (res && res.ok && data) {
+        if (data.weeklyPlan) return { days: data.weeklyPlan };
+        return data;
+      }
+    } catch {}
 
     const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
     return {
@@ -610,12 +668,13 @@ export const api = {
 
   async swapPlanMeal(meal_type: string, exclude_id?: string): Promise<{ swappedDish: HawkerDish }> {
     try {
-      const res = await fetch(`${API_BASE}/plans/swap?meal_type=${meal_type}&exclude_id=${exclude_id || ''}`, {
+      const res = await safeFetch(`${getBaseUrl()}/plans/swap?meal_type=${meal_type}&exclude_id=${exclude_id || ''}`, {
         headers: getAuthHeaders(),
-        signal: AbortSignal.timeout(3000)
+        timeoutMs: 4000
       });
-      if (res.ok) return await res.json();
-    } catch (err) {}
+      const data = await safeJson<any>(res);
+      if (res && res.ok && data) return data;
+    } catch {}
 
     const candidates = HAWKER_DISHES.filter(d => d.id !== exclude_id);
     const randomDish = candidates[Math.floor(Math.random() * candidates.length)] || HAWKER_DISHES[0];

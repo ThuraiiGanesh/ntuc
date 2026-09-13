@@ -2,20 +2,39 @@
   "name": "googoogaga-hawker-nutrition",
   "version": "1.0.0",
   "description": "Googoogaga - Singapore Hawker Food AI Nutrition Tracker",
+  "engines": {
+    "node": ">=22.0.0"
+  },
   "scripts": {
     "install:all": "npm install && npm install --prefix server && npm install --prefix client",
     "dev:server": "npm run dev --prefix server",
     "dev:client": "npm run dev --prefix client",
     "dev": "concurrently -n \"SERVER,CLIENT\" -c \"blue,green\" \"npm run dev:server\" \"npm run dev:client\"",
-    "build": "npm run build --prefix client && npm run build --prefix server",
+    "build": "npm run build:client && npm run build:server",
+    "build:client": "npm run build --prefix client",
+    "build:server": "npm run build --prefix server",
     "android:open": "npm run android:open --prefix client",
     "android:sync": "npm run android:sync --prefix client",
     "android:build": "npm run android:build --prefix client"
   },
-  "devDependencies": {
-    "concurrently": "^9.1.2"
-  },
   "dependencies": {
-    "@google/generative-ai": "^0.24.1"
+    "@anthropic-ai/sdk": "^0.39.0",
+    "@google/genai": "^2.22.0",
+    "@google/generative-ai": "^0.24.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "multer": "^1.4.5-lts.1",
+    "uuid": "^11.1.0"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/multer": "^1.4.12",
+    "@types/node": "^22.13.9",
+    "@types/uuid": "^10.0.0",
+    "concurrently": "^9.1.2",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.2"
   }
 }

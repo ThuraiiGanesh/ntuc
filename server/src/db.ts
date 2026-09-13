@@ -68,8 +68,27 @@ export interface TrainingSample {
   created_at: string;
 }
 
-const DATA_DIR = path.resolve(process.cwd(), 'data');
-const DB_FILE = path.join(DATA_DIR, 'hawker.db');
+const isServerless = Boolean(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME || process.env.NOW_REGION);
+
+function resolveDatabasePath(): string {
+  if (isServerless) {
+    const tmpDir = process.env.TMPDIR || '/tmp';
+    try {
+      if (!fs.existsSync(tmpDir)) fs.mkdirSync(tmpDir, { recursive: true });
+      return path.join(tmpDir, 'hawker.db');
+    } catch {
+      return ':memory:';
+    }
+  }
+
+  const localDataDir = path.resolve(process.cwd(), 'data');
+  try {
+    if (!fs.existsSync(localDataDir)) fs.mkdirSync(localDataDir, { recursive: true });
+    return path.join(localDataDir, 'hawker.db');
+  } catch {
+    return ':memory:';
+  }
+}
 
 export function hashPassword(password: string, salt?: string): { hash: string; salt: string } {
   const s = salt || crypto.randomBytes(16).toString('hex');
@@ -102,15 +121,21 @@ export function verifyToken(token: string): string | null {
 }
 
 class Database {
-  private db: DatabaseSync;
+  private db!: DatabaseSync;
   public static DEMO_USER_ID = 'demo-user-singapore-2026';
 
   constructor() {
-    if (!fs.existsSync(DATA_DIR)) {
-      fs.mkdirSync(DATA_DIR, { recursive: true });
+    const dbPath = resolveDatabasePath();
+    try {
+      this.db = new DatabaseSync(dbPath);
+    } catch (err) {
+      console.warn(`Could not open SQLite at "${dbPath}", falling back to in-memory SQLite:`, err);
+      try {
+        this.db = new DatabaseSync(':memory:');
+      } catch (memErr) {
+        console.error('Fatal: Failed to initialize in-memory SQLite:', memErr);
+      }
     }
-
-    this.db = new DatabaseSync(DB_FILE);
     this.initSchema();
     this.seedDefaultData();
   }
@@ -562,6 +587,7 @@ class Database {
       ...entry,
       id: entry.id || `log-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
       user_id: entry.user_id || Database.DEMO_USER_ID,
+      date: entry.date || new Date().toISOString().split('T')[0],
       created_at: entry.created_at || new Date().toISOString()
     };
 
