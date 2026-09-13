@@ -186,8 +186,10 @@ export function getEnvGeminiKey(): string | null {
 }
 
 /**
- * Returns the best available Gemini API key (localStorage takes priority so users can override)
+ * Returns the best available Gemini API key.
+ * Priority: user's saved key in Settings → VITE_GEMINI_API_KEY env var (Vercel)
  */
 export function getBestGeminiKey(): string | null {
   return getStoredGeminiKey() || getEnvGeminiKey();
 }
+

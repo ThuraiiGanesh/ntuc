@@ -152,30 +152,29 @@ export const CameraScanModal: React.FC<CameraScanModalProps> = ({
       // If scanning a sample dish, use server/fallback catalog path
       if (sampleId) {
         result = await api.identifyFood({ sampleDishId: sampleId });
-      } else {
-        // For real camera/upload photos: try client-side Gemini first (fastest, most accurate)
+      } else if (imgData.startsWith('data:')) {
+        // Real camera/upload photo — use client-side Gemini Vision
         const geminiKey = getBestGeminiKey();
-        if (geminiKey && imgData.startsWith('data:')) {
+        if (geminiKey) {
+          setScanStatus('Sending to Google Gemini Vision AI...');
           try {
-            setScanStatus('Sending to Google Gemini Vision AI...');
             const mimeType = imgData.startsWith('data:image/png') ? 'image/png' : 'image/jpeg';
             result = await identifyFoodWithGemini(imgData, mimeType, geminiKey);
-          } catch (geminiErr) {
-            console.warn('Client Gemini failed, falling back to server:', geminiErr);
-            // Fallback: try server-side identification
-            const serverResult = await api.identifyFood({
-              imageBase64: imgData,
-              customApiKey: geminiKey
-            });
-            result = serverResult;
+          } catch (geminiErr: any) {
+            console.warn('Gemini Vision failed:', geminiErr?.message || geminiErr);
+            setScanStatus('Switching to server analysis...');
+            result = await api.identifyFood({ imageBase64: imgData });
           }
         } else {
-          // No key available: use server (may use env GEMINI_API_KEY) or smart fallback
-          result = await api.identifyFood({
-            imageBase64: imgData.startsWith('data:') ? imgData : undefined
-          });
+          // No key — use server (which reads GEMINI_API_KEY from Vercel env vars)
+          setScanStatus('Using server AI analysis...');
+          result = await api.identifyFood({ imageBase64: imgData });
         }
+      } else {
+        // URL-based image (shouldn't happen for real photos but handle gracefully)
+        result = await api.identifyFood({});
       }
+
 
       timers.forEach(clearTimeout);
       setAnalyzing(false);
