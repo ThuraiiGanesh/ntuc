@@ -67,32 +67,47 @@ export async function identifyFoodWithGemini(
   // Strip data URL prefix if present
   const cleanBase64 = imageBase64.replace(/^data:image\/[a-z+]+;base64,/, '');
 
-  const response = await ai.models.generateContent({
-    model: 'gemini-2.0-flash',
-    contents: [
-      {
-        role: 'user',
-        parts: [
-          {
-            inlineData: {
-              mimeType: (mimeType || 'image/jpeg') as any,
-              data: cleanBase64
-            }
-          },
-          {
-            text: SYSTEM_INSTRUCTION + '\n\nAnalyze this Singapore hawker food photo. Identify the dish, decompose all visible ingredients with estimated gram weights, and calculate nutrition.'
-          }
-        ]
-      }
-    ],
-    config: {
-      responseMimeType: 'application/json',
-      temperature: 0.2,
-      maxOutputTokens: 2048
-    }
-  });
+  const modelsToTry = ['gemini-2.5-flash', 'gemini-3.6-flash'];
+  let lastErr: any = null;
+  let responseText = '';
 
-  const responseText = response.text ?? '';
+  for (const modelName of modelsToTry) {
+    try {
+      const response = await ai.models.generateContent({
+        model: modelName,
+        contents: [
+          {
+            role: 'user',
+            parts: [
+              {
+                inlineData: {
+                  mimeType: (mimeType || 'image/jpeg') as any,
+                  data: cleanBase64
+                }
+              },
+              {
+                text: SYSTEM_INSTRUCTION + '\n\nAnalyze this Singapore hawker food photo. Identify the dish, decompose all visible ingredients with estimated gram weights, and calculate nutrition.'
+              }
+            ]
+          }
+        ],
+        config: {
+          responseMimeType: 'application/json',
+          temperature: 0.2,
+          maxOutputTokens: 2048
+        }
+      });
+      responseText = response.text ?? '';
+      if (responseText) break;
+    } catch (err: any) {
+      lastErr = err;
+      console.warn(`Model ${modelName} failed:`, err?.message || err);
+    }
+  }
+
+  if (!responseText) {
+    throw lastErr || new Error('No response received from Gemini Vision models');
+  }
 
   // Parse the JSON response
   let parsed: any;

@@ -357,9 +357,17 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             <div className="flex gap-2">
               <input
                 type="password"
-                placeholder="Paste AIzaSy... key here"
+                placeholder="Paste your key (AQ... or AIza...)"
                 value={geminiKey}
-                onChange={e => { setGeminiKey(e.target.value); setKeyStatus('idle'); }}
+                onChange={e => {
+                  const val = e.target.value.trim();
+                  setGeminiKey(val);
+                  setKeyStatus('idle');
+                  if (typeof window !== 'undefined') {
+                    if (val) localStorage.setItem('hawker_gemini_api_key', val);
+                    else localStorage.removeItem('hawker_gemini_api_key');
+                  }
+                }}
                 className="flex-1 px-3 py-2 rounded-xl border border-stone-300 text-xs font-mono text-slate-800 placeholder:text-stone-400 focus:outline-none focus:border-blue-500 bg-white"
               />
               <button
