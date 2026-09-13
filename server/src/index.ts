@@ -53,8 +53,9 @@ app.use('/api/recommend', recommendRouter);
 app.use('/api/plans', mealplanRouter);
 
 // Start server
-app.listen(PORT, () => {
-  console.log(`🚀 Googoogaga Hawker Nutrition Server running on port ${PORT}`);
-  console.log(`📍 Health check: http://localhost:${PORT}/api/health`);
+app.listen(Number(PORT), '0.0.0.0', () => {
+  console.log(`🚀 Googoogaga Hawker Nutrition Server running on port ${PORT} (0.0.0.0)`);
+  console.log(`📍 Local health check: http://localhost:${PORT}/api/health`);
+  console.log(`📱 LAN phone access: http://10.6.12.150:${PORT}/api/health`);
   console.log(`🍲 Hawker dishes catalog loaded with 80+ authentic items.`);
 });

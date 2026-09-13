@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Mail, Lock, User, Eye, EyeOff, Sparkles, ArrowRight, ShieldCheck, Utensils } from 'lucide-react';
-import { api } from '../../services/api';
+import { Mail, Lock, User, Eye, EyeOff, Sparkles, ArrowRight, ShieldCheck, Utensils, Globe, Wifi, CheckCircle2, AlertCircle, RefreshCw } from 'lucide-react';
+import { api, getApiBaseUrl } from '../../services/api';
 import { UserProfile } from '../../types';
 
 interface LoginPageProps {
@@ -16,6 +16,45 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Mobile Server Connection Config
+  const [showServerConfig, setShowServerConfig] = useState(false);
+  const [serverUrl, setServerUrl] = useState(() => (
+    typeof window !== 'undefined'
+      ? localStorage.getItem('hawker_api_url') || 'http://10.6.12.150:5000/api'
+      : 'http://10.6.12.150:5000/api'
+  ));
+  const [pingStatus, setPingStatus] = useState<'idle' | 'testing' | 'online' | 'offline'>('idle');
+
+  const handleTestPing = async () => {
+    setPingStatus('testing');
+    try {
+      const cleanUrl = serverUrl.trim().replace(/\/+$/, '');
+      const res = await fetch(`${cleanUrl}/health`, { signal: AbortSignal.timeout(4000) });
+      if (res.ok) {
+        setPingStatus('online');
+        localStorage.setItem('hawker_api_url', cleanUrl);
+      } else {
+        setPingStatus('offline');
+      }
+    } catch {
+      setPingStatus('offline');
+    }
+  };
+
+  const handleSaveServerUrl = () => {
+    const cleanUrl = serverUrl.trim().replace(/\/+$/, '');
+    if (cleanUrl) {
+      localStorage.setItem('hawker_api_url', cleanUrl);
+    } else {
+      localStorage.removeItem('hawker_api_url');
+    }
+    handleTestPing();
+  };
+
+  const handleLoginSuccessWithFallback = (token: string, user: any, profile: any) => {
+    onLoginSuccess(token, user, profile);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -27,13 +66,19 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
           throw new Error('Please enter your name.');
         }
         const res = await api.register({ name: name.trim(), email: email.trim(), password });
-        onLoginSuccess(res.token, res.user, res.profile);
+        handleLoginSuccessWithFallback(res.token, res.user, res.profile);
       } else {
         const res = await api.login({ email: email.trim(), password });
-        onLoginSuccess(res.token, res.user, res.profile);
+        handleLoginSuccessWithFallback(res.token, res.user, res.profile);
       }
     } catch (err: any) {
-      setError(err.message || 'Authentication failed. Please check your credentials.');
+      const msg = err.message || '';
+      if (msg.includes('fetch') || msg.includes('Failed to fetch')) {
+        setError(`Cannot reach backend at ${serverUrl}. Tap "Server Connection" below to verify IP or tap "One-Click Demo" to explore offline.`);
+        setShowServerConfig(true);
+      } else {
+        setError(msg || 'Authentication failed. Please check your credentials.');
+      }
     } finally {
       setLoading(false);
     }
@@ -44,9 +89,35 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
     setLoading(true);
     try {
       const res = await api.login({ email: 'demo@hawker.sg', password: 'hawker123' });
-      onLoginSuccess(res.token, res.user, res.profile);
+      handleLoginSuccessWithFallback(res.token, res.user, res.profile);
     } catch (err: any) {
-      setError(err.message || 'Demo sign-in failed.');
+      console.warn('Backend login unreachable, launching offline demo mode:', err);
+      // Seamless offline demo fallback so user is NEVER blocked on mobile
+      const demoUser = { id: 'demo-mobile-user', name: 'Singapore Hawker Foodie', email: 'demo@hawker.sg' };
+      const demoProfile: UserProfile = {
+        name: 'Singapore Hawker Foodie',
+        onboarded: true,
+        age: 28,
+        sex: 'male',
+        height_cm: 175,
+        current_weight_kg: 72,
+        target_weight_kg: 68,
+        goal: 'lose_weight',
+        activity_level: 'moderately_active',
+        dietary_preferences: ['no_restriction'],
+        health_conditions: [],
+        allergies: [],
+        bmr: 1680,
+        tdee: 2310,
+        target_calories: 1810,
+        target_protein_g: 115,
+        target_carbs_g: 205,
+        target_fat_g: 50,
+        target_sodium_mg: 2000,
+        target_sugar_g: 25,
+        water_target_ml: 2500
+      };
+      handleLoginSuccessWithFallback('offline-demo-token', demoUser, demoProfile);
     } finally {
       setLoading(false);
     }
@@ -194,6 +265,63 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
           <Sparkles className="w-3.5 h-3.5 text-amber-500" />
           <span>One-Click Singapore Demo Account</span>
         </button>
+
+        {/* Server Connection Config for Mobile Phone */}
+        <div className="pt-2 border-t border-stone-100">
+          <button
+            type="button"
+            onClick={() => setShowServerConfig(!showServerConfig)}
+            className="w-full flex items-center justify-between text-[11px] font-bold text-stone-500 hover:text-stone-800 transition-colors py-1"
+          >
+            <div className="flex items-center space-x-1.5">
+              <Wifi className="w-3.5 h-3.5 text-[#D9381E]" />
+              <span>Mobile Server Connection</span>
+            </div>
+            <span className="text-[10px] text-stone-400 font-mono">
+              {showServerConfig ? '▲ Hide' : '▼ Configure IP'}
+            </span>
+          </button>
+
+          {showServerConfig && (
+            <div className="mt-2.5 p-3 rounded-2xl bg-stone-50 border border-stone-200 space-y-2.5 animate-fade-slide-up">
+              <div className="flex items-center justify-between text-[10px]">
+                <span className="font-bold text-stone-600">Backend API URL:</span>
+                {pingStatus === 'testing' && <span className="text-amber-600 font-bold flex items-center space-x-1"><RefreshCw className="w-2.5 h-2.5 animate-spin" /><span>Pinging...</span></span>}
+                {pingStatus === 'online' && <span className="text-emerald-600 font-bold flex items-center space-x-1"><CheckCircle2 className="w-3 h-3" /><span>Server Online</span></span>}
+                {pingStatus === 'offline' && <span className="text-red-600 font-bold flex items-center space-x-1"><AlertCircle className="w-3 h-3" /><span>Unreachable</span></span>}
+              </div>
+
+              <input
+                type="text"
+                value={serverUrl}
+                onChange={e => setServerUrl(e.target.value)}
+                placeholder="http://10.6.12.150:5000/api"
+                className="w-full px-2.5 py-1.5 rounded-xl border border-stone-300 text-[11px] font-mono text-slate-800 bg-white focus:outline-none focus:border-[#D9381E]"
+              />
+
+              <div className="flex space-x-2">
+                <button
+                  type="button"
+                  onClick={handleTestPing}
+                  className="flex-1 py-1.5 rounded-xl bg-white border border-stone-300 text-stone-700 text-[11px] font-bold hover:bg-stone-100 transition-colors"
+                >
+                  Test Connection
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSaveServerUrl}
+                  className="px-3 py-1.5 rounded-xl bg-[#D9381E] text-white text-[11px] font-bold hover:opacity-95 transition-opacity"
+                >
+                  Save
+                </button>
+              </div>
+
+              <p className="text-[10px] text-stone-500 leading-tight">
+                💡 Ensure your phone is connected to the same Wi-Fi as your laptop (<code className="font-mono text-stone-700 font-bold">10.6.12.150</code>).
+              </p>
+            </div>
+          )}
+        </div>
 
         {/* Footer Feature Badges */}
         <div className="pt-2 border-t border-stone-100 flex items-center justify-center space-x-4 text-[10px] text-stone-400 font-semibold">
