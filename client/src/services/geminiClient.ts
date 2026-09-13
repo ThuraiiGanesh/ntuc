@@ -1,10 +1,10 @@
 /**
  * Client-side Gemini Vision Service
- * Calls Google Gemini API directly from the browser using the user's API key.
- * This bypasses the server entirely, so it works on Vercel without any env vars.
+ * Uses @google/genai (v2) which fully supports both AIzaSy... and AQ.Ab8... key formats.
+ * Calls Google Gemini API directly from the browser — no server env vars needed.
  */
 
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { GoogleGenAI } from '@google/genai';
 import { VisionResult } from '../types';
 import { HAWKER_DISHES } from '../data/hawkerData';
 import { getCuratedIngredientsForDish } from './api';
@@ -62,33 +62,37 @@ export async function identifyFoodWithGemini(
   mimeType: string = 'image/jpeg',
   apiKey: string
 ): Promise<VisionResult> {
-  const genAI = new GoogleGenerativeAI(apiKey);
+  const ai = new GoogleGenAI({ apiKey });
 
-  const model = genAI.getGenerativeModel({
+  // Strip data URL prefix if present
+  const cleanBase64 = imageBase64.replace(/^data:image\/[a-z+]+;base64,/, '');
+
+  const response = await ai.models.generateContent({
     model: 'gemini-2.0-flash',
-    generationConfig: {
+    contents: [
+      {
+        role: 'user',
+        parts: [
+          {
+            inlineData: {
+              mimeType: (mimeType || 'image/jpeg') as any,
+              data: cleanBase64
+            }
+          },
+          {
+            text: SYSTEM_INSTRUCTION + '\n\nAnalyze this Singapore hawker food photo. Identify the dish, decompose all visible ingredients with estimated gram weights, and calculate nutrition.'
+          }
+        ]
+      }
+    ],
+    config: {
       responseMimeType: 'application/json',
       temperature: 0.2,
       maxOutputTokens: 2048
     }
   });
 
-  // Strip data URL prefix if present
-  const cleanBase64 = imageBase64.replace(/^data:image\/[a-z+]+;base64,/, '');
-
-  const result = await model.generateContent([
-    {
-      inlineData: {
-        mimeType: mimeType || 'image/jpeg',
-        data: cleanBase64
-      }
-    },
-    {
-      text: SYSTEM_INSTRUCTION + '\n\nAnalyze this Singapore hawker food photo. Identify the dish, decompose all visible ingredients with estimated gram weights, and calculate nutrition.'
-    }
-  ]);
-
-  const responseText = result.response.text();
+  const responseText = response.text ?? '';
 
   // Parse the JSON response
   let parsed: any;
@@ -170,7 +174,7 @@ export function getStoredGeminiKey(): string | null {
 }
 
 /**
- * Check if VITE_GEMINI_API_KEY env var is available (set at build time)
+ * Check if VITE_GEMINI_API_KEY env var is available (baked in at Vercel build time)
  */
 export function getEnvGeminiKey(): string | null {
   try {
@@ -182,7 +186,7 @@ export function getEnvGeminiKey(): string | null {
 }
 
 /**
- * Returns the best available Gemini API key
+ * Returns the best available Gemini API key (localStorage takes priority so users can override)
  */
 export function getBestGeminiKey(): string | null {
   return getStoredGeminiKey() || getEnvGeminiKey();
