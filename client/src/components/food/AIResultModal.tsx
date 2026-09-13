@@ -12,6 +12,7 @@ interface AIResultModalProps {
   onClose: () => void;
   onLogged: (entry: FoodLogEntry) => void;
   onOpenManualSearch: () => void;
+  onOpenSettings?: () => void;
 }
 
 export const AIResultModal: React.FC<AIResultModalProps> = ({
@@ -20,7 +21,8 @@ export const AIResultModal: React.FC<AIResultModalProps> = ({
   photoUrl,
   onClose,
   onLogged,
-  onOpenManualSearch
+  onOpenManualSearch,
+  onOpenSettings
 }) => {
   if (!isOpen || !result) return null;
 
@@ -273,16 +275,27 @@ export const AIResultModal: React.FC<AIResultModalProps> = ({
               <div className="mt-3 bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-900 flex items-start gap-2.5 animate-fade-in">
                 <AlertCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
                 <div className="flex-1">
-                  <p className="font-extrabold text-amber-950">AI Vision Key Not Detected</p>
+                  <p className="font-extrabold text-amber-950">AI Vision Key Not Configured</p>
                   <p className="text-[11px] text-amber-800 mt-0.5 leading-snug">
-                    To analyze custom food photos (like Prata, Laksa, etc.) with real Google Gemini AI Vision, add <code className="bg-amber-100 text-amber-900 px-1 py-0.5 rounded font-mono font-bold">GEMINI_API_KEY</code> to your Vercel Environment Variables, or enter your key in App Settings.
+                    To analyze custom food photos (like Prata, Laksa, etc.) with real Google Gemini AI Vision, tap below to paste your Gemini API key in Settings.
                   </p>
-                  <div className="mt-2 flex items-center gap-2">
+                  <div className="mt-2.5 flex items-center gap-2 flex-wrap">
+                    {onOpenSettings && (
+                      <button
+                        onClick={() => {
+                          onClose();
+                          onOpenSettings();
+                        }}
+                        className="bg-blue-600 text-white px-3 py-1.5 rounded-xl text-[11px] font-bold hover:bg-blue-700 transition-colors shadow-sm flex items-center gap-1"
+                      >
+                        ⚙️ Open Settings & Paste Key
+                      </button>
+                    )}
                     <button
                       onClick={onOpenManualSearch}
-                      className="bg-[#D9381E] text-white px-2.5 py-1 rounded-lg text-[11px] font-bold hover:bg-[#b82e18] transition-colors shadow-sm"
+                      className="bg-[#D9381E] text-white px-2.5 py-1.5 rounded-xl text-[11px] font-bold hover:bg-[#b82e18] transition-colors shadow-sm"
                     >
-                      Search & Select Dish (e.g. Roti Prata)
+                      Search & Select Dish
                     </button>
                   </div>
                 </div>

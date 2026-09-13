@@ -271,6 +271,7 @@ export function App() {
             setIsAIResultOpen(false);
             setIsManualSearchOpen(true);
           }}
+          onOpenSettings={() => setIsSettingsOpen(true)}
         />
 
         {/* Manual Food Search Catalog Modal */}
