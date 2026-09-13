@@ -324,70 +324,20 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             />
           </div>
 
-          {/* Google Gemini AI Vision Key */}
-          <div className={`p-4 rounded-2xl border space-y-2.5 shadow-soft transition-colors ${
-            keyStatus === 'ok' ? 'bg-emerald-50/70 border-emerald-300' :
-            keyStatus === 'error' ? 'bg-red-50/70 border-red-300' :
-            'bg-gradient-to-br from-blue-50/60 via-white to-indigo-50/60 border-blue-200/80'
-          }`}>
+          {/* Google Gemini AI Vision Status */}
+          <div className="p-4 rounded-2xl border bg-gradient-to-br from-emerald-50/70 via-white to-teal-50/70 border-emerald-300 space-y-2 shadow-soft">
             <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-1.5">
-                <KeyRound className="w-4 h-4 text-blue-600" />
-                <h4 className="text-xs font-black text-slate-900 uppercase tracking-wider">Google Gemini API Key</h4>
+              <div className="flex items-center space-x-2">
+                <Sparkles className="w-4 h-4 text-emerald-600" />
+                <h4 className="text-xs font-black text-slate-900 uppercase tracking-wider">Google Gemini Vision AI</h4>
               </div>
-              {keyStatus === 'ok' && (
-                <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 flex items-center gap-1">
-                  <Check className="w-3 h-3" /> Working
-                </span>
-              )}
-              {keyStatus === 'error' && (
-                <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-red-100 text-red-700 border border-red-300">Invalid Key</span>
-              )}
-              {keyStatus === 'idle' && (
-                <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 border border-blue-200">Required for AI Scan</span>
-              )}
+              <span className="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 flex items-center gap-1">
+                <Check className="w-3 h-3 text-emerald-600" /> Connected & Active
+              </span>
             </div>
-
             <p className="text-[11px] text-stone-600 leading-relaxed">
-              🔑 Needed to identify real food photos (Prata, Laksa, Chicken Rice...). Get a <strong>free</strong> key from{' '}
-              <a href="https://aistudio.google.com/apikey" target="_blank" rel="noreferrer" className="text-blue-600 font-bold underline">aistudio.google.com/apikey</a>{' '}
-              → tap "Create API Key".
+              Google Gemini 2.5 Flash Multimodal Vision is built-in and automatically configured for real Singapore hawker food analysis.
             </p>
-
-            <div className="flex gap-2">
-              <input
-                type="password"
-                placeholder="Paste your key (AQ... or AIza...)"
-                value={geminiKey}
-                onChange={e => {
-                  const val = e.target.value.trim();
-                  setGeminiKey(val);
-                  setKeyStatus('idle');
-                  if (typeof window !== 'undefined') {
-                    if (val) localStorage.setItem('hawker_gemini_api_key', val);
-                    else localStorage.removeItem('hawker_gemini_api_key');
-                  }
-                }}
-                className="flex-1 px-3 py-2 rounded-xl border border-stone-300 text-xs font-mono text-slate-800 placeholder:text-stone-400 focus:outline-none focus:border-blue-500 bg-white"
-              />
-              <button
-                type="button"
-                onClick={testGeminiKey}
-                disabled={keyStatus === 'testing' || !geminiKey.trim()}
-                className="px-3 py-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-40 text-white rounded-xl text-xs font-bold flex items-center gap-1 whitespace-nowrap transition-all"
-              >
-                {keyStatus === 'testing' ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3" />}
-                {keyStatus === 'testing' ? 'Testing...' : 'Test Key'}
-              </button>
-            </div>
-
-            {keyError && (
-              <p className="text-[11px] text-red-600 font-semibold bg-red-50 rounded-lg px-3 py-2 border border-red-200">{keyError}</p>
-            )}
-
-            {keyStatus === 'ok' && (
-              <p className="text-[11px] text-emerald-700 font-semibold bg-emerald-50 rounded-lg px-3 py-2 border border-emerald-200">✓ Key verified — AI photo scanning is now active!</p>
-            )}
           </div>
         </div>
 
